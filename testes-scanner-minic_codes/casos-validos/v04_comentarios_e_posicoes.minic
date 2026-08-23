@@ -1,0 +1,10 @@
+int x = 10;
+
+// este comentário deve ser ignorado
+int y = 20;
+
+/*
+   comentário de bloco
+   com várias linhas
+*/
+int resultado = x + y;

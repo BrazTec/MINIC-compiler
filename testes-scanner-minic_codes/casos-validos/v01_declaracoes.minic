@@ -1,0 +1,4 @@
+int idade = 20;
+float altura = 1.75;
+bool ativo = true;
+char letra = 'A';

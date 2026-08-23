@@ -1,0 +1,8 @@
+char letra = 'A';
+char nova_linha = '\n';
+char tab = '\t';
+char barra = '\\';
+
+print("texto simples");
+print("linha\nnova");
+print("aspas: \"texto\"");

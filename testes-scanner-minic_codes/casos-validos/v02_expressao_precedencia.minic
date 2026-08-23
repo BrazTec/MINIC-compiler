@@ -1,0 +1,4 @@
+int resultado = (10 + 5) * 2 - 8 / 4;
+bool maior = resultado > 10;
+bool diferente = resultado != 0;
+int resto = resultado % 3;
