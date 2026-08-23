@@ -1085,7 +1085,7 @@ def main():
     try:
 
         source = file_path.read_text(
-            encoding="utf-8"
+            encoding="Latin-1"
         )
 
     except FileNotFoundError:
