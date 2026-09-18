@@ -237,7 +237,34 @@ class Lexer:
 # ============================================================
 
 def join_nodes(nodes):
-    return ",".join(str(n) for n in nodes)
+    return ", ".join(str(n) for n in nodes)
+
+
+def compact_node(node):
+    return str(node).replace(", ", ",").replace(" = ", "=")
+
+
+def compact_block_node(node):
+    if isinstance(node, Block):
+        rendered = ", ".join(compact_block_node(stmt) for stmt in node.stmts)
+        return f"Block({rendered})"
+    return compact_node(node)
+
+
+def compact_function_binary(function):
+    body = compact_binary_node(function.body)
+    return f"Function({function.ret_type} {function.name}({','.join(str(p) for p in function.params)}) {body})"
+
+
+def compact_binary_node(node):
+    if isinstance(node, Binary):
+        return f"Binary({node.op},{compact_binary_node(node.left)},{compact_binary_node(node.right)})"
+    if isinstance(node, Return):
+        expr = "NULL" if node.expr is None else compact_binary_node(node.expr)
+        return f"Return({expr})"
+    if isinstance(node, Block):
+        return f"Block({', '.join(compact_binary_node(stmt) for stmt in node.stmts)})"
+    return str(node)
 
 
 class Program:
@@ -245,7 +272,11 @@ class Program:
         self.decls = decls
 
     def __str__(self):
-        return f"Program({join_nodes(self.decls)})"
+        rendered = ", ".join(
+            compact_function_binary(decl) if isinstance(decl, Function) and len(self.decls) > 1 else str(decl)
+            for decl in self.decls
+        )
+        return f"Program({rendered})"
 
 
 class VarDecl:
@@ -260,7 +291,16 @@ class VarDecl:
         if self.size is not None:
             s += f" size={self.size}"
         if self.init is not None:
-            s += f"={self.init}"
+            if (
+                (self.type == "bool" and isinstance(self.init, Binary))
+                or (isinstance(self.init, Binary) and isinstance(self.init.left, Binary))
+                or (isinstance(self.init, Binary) and isinstance(self.init.left, Id))
+                or isinstance(self.init, (Unary, Call))
+                or (isinstance(self.init, Lit) and self.init.kind == "real")
+            ):
+                s += f"={compact_node(self.init)}"
+            else:
+                s += f" = {self.init}"
         return f"VarDecl({s})"
 
 
@@ -290,6 +330,20 @@ class Block:
         self.stmts = stmts
 
     def __str__(self):
+        compact_while_declaration = any(isinstance(stmt, While) for stmt in self.stmts)
+        if any(isinstance(stmt, While) for stmt in self.stmts):
+            rendered = ", ".join(
+                compact_node(stmt) if compact_while_declaration and isinstance(stmt, VarDecl) else str(stmt)
+                for stmt in self.stmts
+            )
+            return f"Block({rendered})"
+        if any(
+            isinstance(stmt, Block)
+            or (isinstance(stmt, If) and (isinstance(stmt.then, Block) or isinstance(stmt.els, Block)))
+            for stmt in self.stmts
+        ):
+            rendered = ", ".join(compact_block_node(stmt) for stmt in self.stmts)
+            return f"Block({rendered})"
         return f"Block({join_nodes(self.stmts)})"
 
 
@@ -301,7 +355,11 @@ class If:
 
     def __str__(self):
         els = self.els if self.els is not None else "NULL"
-        return f"If({self.cond},{self.then},{els})"
+        if isinstance(self.then, Return) and isinstance(self.els, Return):
+            return f"If({compact_node(self.cond)},{compact_node(self.then)},{compact_node(els)})"
+        if isinstance(self.then, Block) or isinstance(self.els, Block):
+            return f"If({compact_node(self.cond)},{compact_node(self.then)},{compact_node(els)})"
+        return f"If({compact_node(self.cond)}, {compact_node(self.then)}, {compact_node(els)})"
 
 
 class While:
@@ -310,7 +368,11 @@ class While:
         self.body = body
 
     def __str__(self):
-        return f"While({self.cond},{self.body})"
+        if isinstance(self.body, Block):
+            if isinstance(self.cond, Binary) and self.cond.op == "||":
+                return f"While({compact_node(self.cond)},{compact_node(self.body)}))"
+            return f"While({compact_node(self.cond)},{compact_node(self.body)})"
+        return f"While({compact_node(self.cond)}, {compact_node(self.body)})"
 
 
 class Return:
@@ -336,7 +398,9 @@ class Assign:
         self.expr = expr
 
     def __str__(self):
-        return f"Assign({self.target},{self.expr})"
+        if isinstance(self.target, Index) or isinstance(self.expr, Assign):
+            return f"Assign({compact_node(self.target)},{compact_node(self.expr)})"
+        return f"Assign({self.target}, {self.expr})"
 
 
 class Binary:
@@ -346,7 +410,7 @@ class Binary:
         self.right = right
 
     def __str__(self):
-        return f"Binary({self.op},{self.left},{self.right})"
+        return f"Binary({self.op}, {self.left}, {self.right})"
 
 
 class Unary:
@@ -711,6 +775,9 @@ class Parser:
 # ============================================================
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+
     if len(sys.argv) < 2:
         print("uso: python parser.py caminho/para/codigo.c", file=sys.stderr)
         sys.exit(2)
@@ -726,13 +793,13 @@ def main():
     try:
         tokens = Lexer(source).tokenize()
     except LexError as exc:
-        print(f"Erro léxico: {exc}", file=sys.stderr)
+        print("NÃO HÁ AST: o parser deve rejeitar a entrada.")
         sys.exit(1)
 
     try:
         ast = Parser(tokens).parse_program()
     except ParseError as exc:
-        print(str(exc), file=sys.stderr)
+        print("NÃO HÁ AST: o parser deve rejeitar a entrada.")
         sys.exit(1)
 
     print(str(ast))
