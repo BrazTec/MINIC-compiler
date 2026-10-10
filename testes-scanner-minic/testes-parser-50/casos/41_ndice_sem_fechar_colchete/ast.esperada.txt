@@ -1,0 +1,2 @@
+NÃO HÁ AST: o parser deve rejeitar a entrada.
+Erro sintático na linha 1, coluna 28: destino inválido para atribuição. Encontrado '='.
