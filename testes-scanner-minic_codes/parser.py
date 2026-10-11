@@ -1817,6 +1817,7 @@ def print_syntax_rejection(error: ParserError) -> None:
 # ============================================================
 
 def main():
+    sys.stderr.reconfigure(encoding="utf-8")
 
     if len(sys.argv) != 2:
 
