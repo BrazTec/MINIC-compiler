@@ -1,0 +1,2 @@
+NÃO HÁ AST: o parser deve rejeitar a entrada.
+Erro sintático na linha 1, coluna 12: esperado '{' para iniciar o corpo da função. Encontrado 'return'.

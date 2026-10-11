@@ -1,0 +1,15 @@
+int soma(int valores[3]) {
+    int resultado = valores[0];
+    resultado = resultado + valores[1];
+    resultado = resultado + valores[2];
+    return resultado;
+}
+
+void main() {
+    int numeros[3];
+    numeros[0] = 10;
+    numeros[1] = 20;
+    numeros[2] = 30;
+    int total = soma(numeros);
+    print(total);
+}

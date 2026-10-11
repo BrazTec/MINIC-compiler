@@ -1,0 +1,97 @@
+# RELATÓRIO – ETAPA 3 - ANALISADOR SEMÂNTICO MINIC
+
+
+====================================
+
+Arquitetura adotada
+-------------------
+Python:
+  scanner.py -> parser.py -> semantic.py
+                         \-> minic.py (orquestração)
+
+C:
+  parser.c mantém a infraestrutura sintática/AST e pode ser executado isoladamente.
+  semantic.c contém exclusivamente as regras semânticas.
+  minic.c é o ponto de entrada exigido pelo script da disciplina.
+
+O script C compila apenas minic.c. Para manter os componentes em arquivos separados
+sem alterar o script oficial, minic.c incorpora parser.c e semantic.c na mesma unidade
+de tradução por #include. O main isolado de parser.c é desabilitado somente nessa
+compilação por MINIC_EMBEDDED.
+
+Adequações compatíveis no parser
+--------------------------------
+1. A AST passou a guardar linha/coluna em nós relevantes para os diagnósticos.
+2. Parameter passou a registrar se o parâmetro é vetor (ex.: int dados[]).
+3. O parser aceita parâmetros vetor na Etapa 3.
+4. Foi criado semantic_mode. O valor padrão é false, preservando o comportamento
+   da Etapa 2. minic.py/minic.c usam semantic_mode=true para postergar a validação
+   de destino atribuível para o analisador semântico (SEM013).
+5. A serialização da AST da Etapa 2 permanece inalterada para os 50 fixtures já
+   existentes; parâmetros vetor, ausentes nesses fixtures, são serializados com [].
+
+Regras semânticas implementadas
+-------------------------------
+- escopo léxico e sombreamento;
+- declaração duplicada no mesmo escopo;
+- identificador não declarado;
+- coleta antecipada de assinaturas para recursão;
+- promoção implícita int -> float;
+- proibição de estreitamento float -> int;
+- tipagem de operações aritméticas, relacionais e lógicas;
+- condições de if/while obrigatoriamente bool;
+- vetores e índices inteiros;
+- parâmetros vetor;
+- aridade de chamadas;
+- compatibilidade de tipos dos argumentos;
+- uso de função void como comando e rejeição quando usada como valor;
+- compatibilidade de retorno;
+- cobertura de retorno em funções não void;
+- destino de atribuição (valor-L);
+- atribuição associativa à direita.
+
+Códigos exercitados pela suíte
+------------------------------
+SEM001  identificador não declarado
+SEM002  declaração duplicada
+SEM003  incompatibilidade de atribuição/conversão
+SEM005  condição não booleana
+SEM006  índice de vetor inválido
+SEM007  aridade incorreta
+SEM008  tipo de argumento incompatível
+SEM009  retorno incompatível
+SEM011  possível queda de função não void
+SEM012  chamada void usada como valor
+SEM013  destino não atribuível
+
+Detalhe dos gabaritos
+---------------------
+Os scripts comparam os arquivos byte a byte usando diff. Os gabaritos de sucesso
+possuem uma única linha sem quebra final. Os gabaritos de rejeição usam CRLF entre
+os diagnósticos e a linha de resumo, também sem quebra ao final. minic.py e minic.c
+escrevem a saída canônica exatamente nesse formato; os gabaritos fornecidos não
+foram alterados.
+
+Validação realizada
+-------------------
+Python:
+  bash testes_semanticos_py.sh minic.py minic-testes-semanticos
+  Resultado: 20/20 aprovados; 0 reprovados.
+
+C:
+  bash testes_semanticos_c.sh minic.c minic-testes-semanticos
+  Resultado: 20/20 aprovados; 0 reprovados.
+
+Compatibilidade regressiva da Etapa 2
+-------------------------------------
+- parser.py em modo padrão foi comparado com os 50 gabaritos: 50/50 equivalentes.
+- parser.c foi executado pelo script oficial da Etapa 2:
+  Total: 50; Aprovados: 50; Reprovados: 0; Erros sintáticos: 25; Erros de execução: 0.
+
+Comandos oficiais da Etapa 3
+----------------------------
+Python:
+  ./testes_semanticos_py.sh minic.py minic-testes-semanticos
+
+C:
+  ./testes_semanticos_c.sh minic.c minic-testes-semanticos

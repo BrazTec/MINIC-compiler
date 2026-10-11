@@ -1,1 +1,0 @@
-Program(VarDecl(int x = Lit(int,42)))

@@ -1,0 +1,2 @@
+NÃO HÁ AST: o parser deve rejeitar a entrada.
+Erro sintático na linha 2, coluna 1: esperado ';' após a declaração. Encontrado 'EOF'.

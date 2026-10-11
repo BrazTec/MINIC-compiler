@@ -1,1 +1,0 @@
-Program(VarDecl(int a), VarDecl(float media), VarDecl(bool ativo = Lit(bool,true)))

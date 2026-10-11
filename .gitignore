@@ -1,2 +1,6 @@
 __pycache__
 .git
+scanner.exe
+semantic.exe
+parser.exe
+minic.exe
