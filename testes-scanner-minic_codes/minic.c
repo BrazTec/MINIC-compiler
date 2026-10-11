@@ -26,11 +26,10 @@ int main(int argc, char **argv)
 
 #ifdef _WIN32
     /*
-     * Os gabaritos semânticos usam CRLF entre as linhas. semantic.c grava
-     * esses bytes explicitamente. Em executáveis nativos do Windows, stdout
-     * em modo texto converteria novamente cada \n para CRLF, produzindo
-     * \r\r\n. O modo binário preserva exatamente os bytes emitidos e
-     * mantém o mesmo resultado observado em Linux/MSYS2.
+     * Os gabaritos semânticos usam LF (\n) entre as linhas e não possuem
+     * quebra de linha ao final. Em executáveis nativos do Windows, stdout em
+     * modo texto pode converter LF para CRLF. O modo binário impede essa
+     * tradução e preserva exatamente os bytes exigidos pelos gabaritos.
      */
     _setmode(_fileno(stdout), _O_BINARY);
 #endif
