@@ -11,6 +11,8 @@
 
 #define MINIC_EMBEDDED
 #include "parser.c"
+#pragma GCC diagnostic ignored "-Wformat"
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
 #include "semantic.c"
 
 #ifdef _WIN32
