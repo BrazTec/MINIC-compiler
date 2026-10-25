@@ -2,7 +2,7 @@
 
 **Disciplina:** Compiladores  
 **Escopo:** análise léxica, análise sintática, análise semântica e produção/otimização de código intermediário (IR/TAC).  
-**Referência para o status:** evidências do ambiente Windows em **25/10/2026, 02:45:20 UTC**, em `docs/evidencia/00_RESUMO_DE_VALIDACAO.txt`.
+
 
 ## 1. Pipeline único da implementação
 
