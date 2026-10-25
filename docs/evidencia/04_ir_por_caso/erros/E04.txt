@@ -1,0 +1,35 @@
+CASO: E04
+CATEGORIA: erros
+ARQUIVO: testes-scanner-minic_codes/minic-ir-test-cases/testes/02-erros/E04/E04.c
+GABARITO: testes-scanner-minic_codes/minic-ir-test-cases/testes/02-erros/E04/E04.txt
+SHA256_GABARITO: b21270379d1b7ab43292a1830f1699305badd986f4141da65435dfbb03d7c574
+DATA_UTC: 2026-10-25T02:46:48+00:00
+PLATAFORMA: Windows-11-10.0.26300-SP0
+RESULTADO: APROVADO NOS CRITÉRIOS AUTOMATIZADOS
+
+VERIFICAÇÕES REALIZADAS:
+  - -O0: saída e código de retorno iguais em Python e C
+  - Categoria exigida no gabarito: retorno 4
+  - Diagnóstico conferido por presença/rejeição, não por redação idêntica
+
+ATENÇÃO: este relatório não confunde equivalência de execução com
+comprovação de cada transformação-alvo de otimização. A IR canônica
+do professor é referência estrutural, não saída a reproduzir literalmente.
+
+===========================================================================
+EXECUÇÃO: Python -O0
+COMANDO: C:/msys64/ucrt64/bin/python3.exe minic.py --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/02-erros/E04/E04.c
+EXIT_STATUS: 4
+STDOUT:
+(vazio)
+STDERR:
+SEM015 — linha 4, coluna 9: Operadores aritméticos exigem operandos numéricos (recebeu bool e int).
+
+===========================================================================
+EXECUÇÃO: C -O0
+COMANDO: C:/Users/eduar/AppData/Local/Temp/minic-ir-casos-2i70nvn5/minic_ir_casos.exe --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/02-erros/E04/E04.c
+EXIT_STATUS: 4
+STDOUT:
+(vazio)
+STDERR:
+SEM015 — linha 4, coluna 9: Operadores aritméticos exigem operandos numéricos (recebeu bool e int).

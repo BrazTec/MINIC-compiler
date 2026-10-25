@@ -1,0 +1,13 @@
+REVISÃO DE OTIMIZAÇÕES DA ETAPA 4
+UTC: 2026-10-25T02:36:19+00:00
+AMBIENTE: Linux (desenvolvimento; não é uma execução Windows).
+
+Scanner PY 18/18, C 18/18; parser PY 50/50, C 50/50; semântico PY 20/20, C 20/20.
+IR complementar: 30/30; equivalência Python/C O0/O1: 60/60.
+Predicados O01-O10: 10/10; CSE simbólica PY e C aprovada.
+IR isolado: 30/30.
+Scripts oficiais IR: incompatibilidade de protocolo documentada, não alterados.
+
+AVISO: 00_RESUMO_DE_VALIDACAO.txt pode refletir uma execução Windows anterior
+à otimização. Reexecutar gerar_evidencias.py no Windows para atualizar
+a evidência definitiva desta versão.

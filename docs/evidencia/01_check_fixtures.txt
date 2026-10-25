@@ -1,0 +1,10 @@
+ETAPA: Fixtures JSONL
+DATA_UTC: 2026-10-25T02:45:20+00:00
+AMBIENTE: Windows-11-10.0.26300-SP0
+COMANDO: C:/msys64/ucrt64/bin/python3.exe check_fixtures.py
+RESULTADO DE EXECUÇÃO: APROVADO NO TESTADOR
+
+SAÍDA COMPLETA:
+Fixtures válidas: 794 tokens esperados verificados.
+
+EXIT_STATUS: 0

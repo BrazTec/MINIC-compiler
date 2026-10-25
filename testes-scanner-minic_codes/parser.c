@@ -799,6 +799,7 @@ typedef enum {
     NODE_VAR_DECL,
     NODE_IF,
     NODE_WHILE,
+    NODE_BREAK,
     NODE_RETURN,
     NODE_EXPR_STMT,
     NODE_ASSIGN,
@@ -1731,6 +1732,53 @@ static ASTNode *parse_while_statement(Parser *parser)
     return node;
 }
 
+static ASTNode *parse_for_statement(Parser *parser)
+{
+    ASTNode *outer, *inner, *condition, *initial = NULL, *step = NULL;
+    ASTNode *body, *while_node;
+    Token fabricated = {0};
+    parser_consume(parser, TOK_LPAREN, "esperado '(' após for");
+    if (parser->has_error) return NULL;
+    if (!parser_check(parser, TOK_SEMICOLON)) {
+        initial = arena_new_node(&parser->arena, NODE_EXPR_STMT);
+        initial->as.expr_stmt.expression = parse_expression(parser);
+        if (parser->has_error) return NULL;
+    }
+    parser_consume(parser, TOK_SEMICOLON, "esperado ';' após inicializador do for");
+    if (parser->has_error) return NULL;
+    if (parser_check(parser, TOK_SEMICOLON)) {
+        fabricated.type = TOK_TRUE;
+        fabricated.lexeme = "true";
+        fabricated.line = parser_current(parser)->line;
+        fabricated.column = parser_current(parser)->column;
+        condition = new_lit(parser, "bool", &fabricated);
+    } else {
+        condition = parse_expression(parser);
+        if (parser->has_error) return NULL;
+    }
+    parser_consume(parser, TOK_SEMICOLON, "esperado ';' após condição do for");
+    if (parser->has_error) return NULL;
+    if (!parser_check(parser, TOK_RPAREN)) {
+        step = arena_new_node(&parser->arena, NODE_EXPR_STMT);
+        step->as.expr_stmt.expression = parse_expression(parser);
+        if (parser->has_error) return NULL;
+    }
+    parser_consume(parser, TOK_RPAREN, "esperado ')' após for");
+    if (parser->has_error) return NULL;
+    body = parse_statement(parser);
+    if (parser->has_error) return NULL;
+    inner = new_block(parser);
+    node_list_push(&inner->as.block.items, body);
+    if (step != NULL) node_list_push(&inner->as.block.items, step);
+    while_node = arena_new_node(&parser->arena, NODE_WHILE);
+    while_node->as.while_stmt.condition = condition;
+    while_node->as.while_stmt.body = inner;
+    outer = new_block(parser);
+    if (initial != NULL) node_list_push(&outer->as.block.items, initial);
+    node_list_push(&outer->as.block.items, while_node);
+    return outer;
+}
+
 static ASTNode *parse_return_statement(Parser *parser)
 {
     ASTNode *node;
@@ -1802,6 +1850,19 @@ static ASTNode *parse_statement(Parser *parser)
 
     if (parser_match(parser, TOK_WHILE)) {
         return parse_while_statement(parser);
+    }
+
+    if (parser->semantic_mode && parser_match(parser, TOK_FOR)) {
+        return parse_for_statement(parser);
+    }
+
+    if (parser->semantic_mode && parser_match(parser, TOK_BREAK)) {
+        Token *token = parser_previous(parser);
+        ASTNode *break_node = arena_new_node(&parser->arena, NODE_BREAK);
+        break_node->line = token->line;
+        break_node->column = token->column;
+        parser_consume(parser, TOK_SEMICOLON, "esperado ';' após break");
+        return break_node;
     }
 
     if (parser_match(parser, TOK_RETURN)) {
@@ -2321,6 +2382,10 @@ static void serialize_node(StringBuffer *buffer, const ASTNode *node)
             sb_append_char(buffer, ',');
             serialize_node(buffer, node->as.while_stmt.body);
             sb_append_char(buffer, ')');
+            break;
+
+        case NODE_BREAK:
+            sb_append(buffer, "Break()");
             break;
 
         case NODE_RETURN:

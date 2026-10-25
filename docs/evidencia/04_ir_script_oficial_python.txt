@@ -1,0 +1,44 @@
+ETAPA: IR Python — script oficial
+DATA_UTC: 2026-10-25T02:45:20+00:00
+AMBIENTE: Windows-11-10.0.26300-SP0
+COMANDO: bash minic-ir-test-cases/test_ir_python.sh minic.py ./minic-ir-test-cases/testes
+RESULTADO DE EXECUÇÃO: REPROVADO / EXIGE INVESTIGAÇÃO
+
+SAÍDA COMPLETA:
+[FALHA][normais] P01.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][normais] P02.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][normais] P03.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][normais] P04.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][normais] P05.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][normais] P06.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][normais] P07.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][normais] P08.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][normais] P09.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][normais] P10.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][erros] E01.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][erros] E02.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][erros] E03.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][erros] E04.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][erros] E05.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][erros] E06.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][erros] E07.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][erros] E08.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][erros] E09.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][erros] E10.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][otimizacao] O01.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][otimizacao] O02.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][otimizacao] O03.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][otimizacao] O04.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][otimizacao] O05.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][otimizacao] O06.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][otimizacao] O07.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][otimizacao] O08.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][otimizacao] O09.c — resultado diferente do gabarito após ignorar as mensagens
+[FALHA][otimizacao] O10.c — resultado diferente do gabarito após ignorar as mensagens
+
+Resumo:
+  Testes normais:      0/10 aprovados
+  Testes com erro:     0/10 aprovados
+  Testes otimização:  0/10 aprovados
+
+EXIT_STATUS: 1

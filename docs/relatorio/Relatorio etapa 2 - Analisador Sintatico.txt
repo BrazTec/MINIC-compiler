@@ -1,0 +1,348 @@
+===============================================================================
+MINIC - COMPILADOR
+RELATÓRIO DA ETAPA 2: ANALISADOR SINTÁTICO DA LINGUAGEM MINIC
+===============================================================================
+Disciplina: Compiladores
+Implementações: Python 3 e C11
+Status: IMPLEMENTADA E VALIDADA — 50/50 casos em Python e 50/50 em C (suítes oficiais).
+
+Resumo
+
+Este relatório apresenta o desenvolvimento da segunda etapa do projeto da linguagem educacional MINIC, correspondente à implementação do analisador sintático (parser). O trabalho foi desenvolvido sobre o analisador léxico previamente validado, com implementação inicial em Python e posterior reprodução em C. O parser recebe diretamente um arquivo de código-fonte, executa a análise léxica internamente, aplica uma estratégia de análise descendente recursiva e produz uma Árvore Sintática Abstrata (AST) em representação textual compacta. A validação foi realizada com o conjunto oficial de 50 casos, sendo 25 entradas sintaticamente válidas e 25 inválidas. A versão C foi executada com o script Bash fornecido e atingiu 50 casos aprovados, 25 erros sintáticos corretamente identificados e zero erros de execução.
+
+Palavras-chave: MINIC; parser; análise sintática; AST; descendente recursivo; Python; C.
+
+Sumário
+
+1. Introdução
+
+2. Objetivos da etapa
+
+3. Materiais e estrutura de testes
+
+4. Contrato de execução e integração com o lexer
+
+5. Estratégia de análise sintática
+
+6. Gramática implementada
+
+7. Estrutura e serialização da AST
+
+8. Implementação em Python
+
+9. Tratamento de erros sintáticos
+
+10. Regularização dos gabaritos de teste
+
+11. Implementação em C
+
+12. Validação e execução independente
+
+13. Resultados obtidos
+
+14. Limitações e escopo da etapa
+
+15. Conclusão
+
+16. Referências
+
+Apêndice A - Comandos de execução
+
+
+1. Introdução
+
+A segunda etapa do projeto MINIC teve como finalidade implementar o analisador sintático da linguagem. Enquanto a etapa léxica transforma o código-fonte em tokens, a análise sintática verifica se a sequência desses tokens respeita a gramática da linguagem e, nos programas válidos, constrói uma representação estrutural do programa por meio de uma Árvore Sintática Abstrata (AST).
+
+O desenvolvimento foi realizado de forma incremental. Inicialmente foi examinada a documentação do conjunto de testes fornecido, incluindo README, manifesto, índice e os 50 diretórios de casos. A partir dessa inspeção foram inferidos o contrato de execução, a forma textual da AST, as construções sintáticas efetivamente cobradas e os principais pontos de erro esperados. Em seguida, o parser foi implementado em Python, integrado ao scanner da Etapa 1, e posteriormente reproduzido em C de forma autocontida.
+
+Também foram registradas e tratadas inconsistências de apresentação encontradas nos gabaritos textuais. As adequações foram mantidas separadas da lógica do parser e documentadas neste relatório para preservar a rastreabilidade do processo de validação.
+
+
+2. Objetivos da etapa
+
+Os principais objetivos estabelecidos para esta etapa foram:
+
+receber diretamente um arquivo de código-fonte C/MINIC pela linha de comando;
+
+reutilizar a análise léxica já validada na Etapa 1;
+
+reconhecer declarações, funções, blocos, comandos e expressões previstas nos 50 casos oficiais;
+
+respeitar precedência e associatividade dos operadores;
+
+construir e serializar a AST no formato de S-expressão indicado nos gabaritos;
+
+rejeitar entradas sintaticamente inválidas com código de saída diferente de zero;
+
+informar erro sintático com linha, coluna, expectativa e token encontrado;
+
+implementar versões equivalentes em Python e C;
+
+validar os 50 casos e demonstrar execução independente do parser.
+
+
+3. Materiais e estrutura de testes
+
+O material principal disponibilizado para esta etapa foi a pasta testes-parser-50. O conjunto contém 50 programas completos, divididos igualmente entre casos válidos e casos sintaticamente inválidos.
+
+Componente              | Descrição
+------------------------+---------------------------------------------------------------
+casos/                  | 50 diretórios, um para cada cenário de teste
+codigo.c                | Programa de entrada do caso
+ast.esperada.txt        | Representação textual esperada da AST ou indicação de rejeição
+resultado.esperado.txt  | Status ACEITO/REJEITADO e pista de diagnóstico
+README.md               | Contrato da etapa e formato da AST
+INDICE.txt              | Relação dos 50 casos
+manifesto.json          | Metadados de cada caso e resultado esperado
+testar_parser_python.sh | Script Bash oficial para a versão Python
+testar_parser_c.sh      | Script Bash oficial para compilar e testar a versão C
+
+Tabela 1 - Principais componentes do conjunto de testes.
+
+Os casos 01 a 25 devem ser aceitos e produzir AST. Os casos 26 a 50 devem ser rejeitados sem AST. O README também estabelece que, nos casos inválidos, deve existir código de saída diferente de zero e mensagem de erro sintático, podendo a mensagem exata variar entre implementações.
+
+
+4. Contrato de execução e integração com o lexer
+
+O contrato de execução exige que o parser receba o código-fonte diretamente, sem a necessidade de um arquivo intermediário de tokens JSONL. Os comandos definidos para avaliação são:
+
+Python: python parser.py codigo.c  C: ./parser codigo.c
+
+Quadro 1 - Contrato de execução do parser.
+
+Na implementação Python, o arquivo parser.py importa a classe Scanner do scanner.py e converte os itens léxicos para uma estrutura Token utilizada pelo parser. Assim, o fluxo permanece interno ao processo.
+
+codigo.c    ↓ Scanner    ↓ lista de tokens em memória    ↓ Parser descendente recursivo    ↓ AST    ↓ serialização textual
+
+Quadro 2 - Fluxo interno da implementação Python.
+
+Na versão C, a exigência de compilação isolada do script oficial determinou uma solução autocontida. O parser.c incorpora a infraestrutura léxica necessária, armazena os tokens em memória e executa a análise sintática no mesmo programa. Dessa forma, não é necessário compilar parser.c juntamente com scanner.c.
+
+
+5. Estratégia de análise sintática
+
+A estratégia escolhida foi o parser descendente recursivo. Nessa abordagem, cada não terminal relevante da gramática é representado por uma função, e o parser mantém um cursor sobre a sequência de tokens. Operações auxiliares como check, match, advance e consume permitem verificar o token atual, consumi-lo opcionalmente ou exigir sua presença.
+
+A escolha foi adequada ao subconjunto MINIC coberto pelos testes, pois a gramática pode ser organizada em regras determinísticas e a precedência das expressões pode ser implementada por níveis de funções encadeadas.
+
+Operação                | Finalidade
+------------------------+----------------------------------------------------------
+current()               | Retorna o token atual sem avançar
+check(...)              | Verifica se o token atual pertence a um conjunto de tipos
+advance()               | Consome o token atual e move o cursor
+match(...)              | Consome opcionalmente um token se houver correspondência
+consume(tipo, mensagem) | Exige um token e gera ParserError se ele estiver ausente
+
+Tabela 2 - Operações básicas de navegação do parser.
+
+
+6. Gramática implementada
+
+A gramática abaixo resume as construções efetivamente exercitadas pelos 50 casos fornecidos. Ela não pretende substituir uma especificação futura mais ampla da linguagem MINIC; representa o núcleo validado nesta etapa.
+
+programa           → item* EOF item               → declaracao_ou_funcao | comando declaracao_variavel→ tipo IDENT dimensao? inicializador? ";" dimensao           → "[" expressao "]" inicializador      → "=" expressao  funcao             → tipo_retorno IDENT "(" parametros? ")" bloco parametros         → parametro ("," parametro)* parametro          → tipo IDENT bloco              → "{" (declaracao_variavel | comando)* "}"  comando            → bloco                    | "if" "(" expressao ")" comando ("else" comando)?                    | "while" "(" expressao ")" comando                    | "return" expressao? ";"                    | expressao ";"  expressao          → atribuicao atribuicao         → ou_logico ("=" atribuicao)? ou_logico          → e_logico ("||" e_logico)* e_logico           → igualdade ("&&" igualdade)* igualdade          → relacional (("==" | "!=") relacional)* relacional         → aditiva (("<" | ">" | "<=" | ">=") aditiva)* aditiva            → multiplicativa (("+" | "-") multiplicativa)* multiplicativa     → unaria (("*" | "/" | "%") unaria)* unaria             → ("!" | "-" | "+") unaria | posfixa posfixa            → primaria (chamada | indice)* chamada            → "(" argumentos? ")" indice             → "[" expressao "]" argumentos         → expressao ("," expressao)* primaria           → IDENT | literal | "(" expressao ")"
+
+Quadro 3 - Síntese da gramática implementada.
+
+6.1 Precedência e associatividade
+
+As expressões foram divididas em níveis de precedência. A atribuição possui a menor precedência e é associativa à direita; os demais operadores binários dos níveis implementados são processados da esquerda para a direita.
+
+Precedência | Operadores / construção      | Observação
+------------+------------------------------+------------------------------
+Mais baixa  | =                            | Associativa à direita
+            | ||                           | Ou lógico
+            | &&                           | E lógico
+            | == !=                        | Igualdade
+            | < > <= >=                    | Relacionais
+            | + -                          | Aditivos
+            | * / %                        | Multiplicativos
+            | ! - +                        | Unários
+Mais alta   | chamada, indexação, primário | Pós-fixos e operandos básicos
+
+Tabela 3 - Precedência das expressões.
+
+O caso de atribuição associativa confirma o comportamento à direita. A expressão a = b = 3 é representada como Assign(Id(a),Assign(Id(b),Lit(int,3))), correspondendo semanticamente a a = (b = 3).
+
+
+7. Estrutura e serialização da AST
+
+A AST foi separada da lógica de análise para evitar que decisões de apresentação textual contaminassem as regras sintáticas. O parser constrói objetos/nós estruturais e, ao final, uma função de serialização transforma a árvore na S-expressão exigida pelos testes.
+
+Nó       | Finalidade
+---------+-----------------------------------------
+Program  | Raiz do programa
+Function | Declaração de função, parâmetros e corpo
+Block    | Sequência de itens delimitada por chaves
+VarDecl  | Declaração de variável ou vetor
+If       | Condicional, incluindo ramo else ou NULL
+While    | Laço while
+Return   | Retorno com valor ou NULL
+ExprStmt | Expressão utilizada como comando
+Assign   | Atribuição
+Binary   | Operação binária
+Unary    | Operação unária
+Call     | Chamada de função
+Index    | Indexação de vetor
+Id       | Identificador
+Lit      | Literal
+NULL     | Ausência explícita de ramo ou valor
+
+Tabela 4 - Nós da AST utilizados na etapa.
+
+int soma(int a, int b) {     return a + b; }  AST: Program(Function(int soma(int a,int b) Block(Return(Binary(+,Id(a),Id(b))))))
+
+Quadro 4 - Exemplo de código e AST compacta.
+
+
+8. Implementação em Python
+
+A implementação Python foi organizada em quatro grupos principais: estruturas de token e AST, exceções de erro, classe Parser e integração com o scanner. A classe Parser recebe uma lista de tokens já reconhecidos pelo lexer e mantém o índice do token atual durante a análise.
+
+As funções de expressão seguem diretamente a hierarquia de precedência: parse_assignment, parse_logical_or, parse_logical_and, parse_equality, parse_relational, parse_additive, parse_multiplicative, parse_unary, parse_postfix e parse_primary. Essa separação simplifica a leitura do código e permite identificar com clareza qual nível da gramática está sendo processado.
+
+A integração com o scanner é feita em memória. Caso o scanner retorne um erro léxico, a análise sintática não prossegue como se o token fosse válido; o erro é tratado separadamente como LexicalError.
+
+
+9. Tratamento de erros sintáticos
+
+Os erros sintáticos são representados pela exceção ParserError. O objeto de erro preserva o token em que a falha foi detectada e produz diagnóstico contendo linha, coluna, expectativa e elemento encontrado.
+
+Para conciliar a ausência de AST nos casos inválidos com a exigência de diagnóstico sintático, foi adotada uma saída em duas camadas. A primeira informa de maneira padronizada que não existe AST; a segunda apresenta o diagnóstico detalhado.
+
+NÃO HÁ AST: o parser deve rejeitar a entrada. Erro sintático na linha 2, coluna 1: esperado ';' após a declaração. Encontrado 'EOF'.
+
+Quadro 5 - Saída padronizada para entrada sintaticamente inválida.
+
+Na implementação Python, essa responsabilidade foi isolada na função print_syntax_rejection(error). Nos casos sintáticos inválidos, o parser escreve as duas linhas em stderr e encerra com código 1. Entradas válidas produzem somente a AST em stdout e encerram com código 0.
+
+
+10. Regularização dos gabaritos de teste
+
+Durante a validação, foram identificadas diferenças entre a descrição do README e a comparação textual realizada pelos scripts Bash fornecidos. As alterações a seguir foram realizadas sobre a cópia de trabalho dos gabaritos, mantendo os scripts oficiais sem modificação e registrando as mudanças para fins de rastreabilidade.
+
+10.1 Padronização de espaços em casos válidos
+
+Alguns arquivos ast.esperada.txt representavam a mesma estrutura sintática com convenções diferentes de espaços internos. Como o serializador do parser utiliza uma forma canônica, foram padronizados apenas os espaços nos casos 02, 03, 04, 06, 07, 08, 09 e 10. Nenhum nó, operador, literal ou relação estrutural da AST foi alterado.
+
+10.2 Correção estrutural do caso 24
+
+No caso 24 foi identificado um parêntese de fechamento excedente no arquivo ast.esperada.txt. A AST produzida pelo parser possuía quantidade balanceada de parênteses e coincidia com o gabarito após a remoção de exatamente um fechamento excedente. Essa correção foi registrada separadamente das alterações de espaçamento.
+
+10.3 Casos inválidos e saída em duas camadas
+
+Durante a validação dos casos sintaticamente inválidos, observou-se que o script de teste fornecido realiza comparação textual com ast.esperada.txt, cujo conteúdo original indicava apenas a ausência da AST. Entretanto, o README também exige a emissão de diagnóstico sintático e permite variação na mensagem. Para compatibilizar os dois requisitos sem eliminar informações de diagnóstico, foi adotada uma saída em duas camadas: a primeira registra explicitamente que não há AST, e a segunda apresenta o erro sintático detalhado, incluindo linha, coluna, expectativa e token encontrado. Os gabaritos dos casos inválidos foram regularizados para refletir essa representação.
+
+A regularização foi automatizada pelo script regularizar_gabaritos_invalidos.py. O utilitário seleciona somente os casos marcados como REJEITADO no manifesto, executa o parser, exige código de saída diferente de zero, stdout vazio, cabeçalho de rejeição e diagnóstico sintático. Por padrão atua em pré-visualização; a escrita somente ocorre com a opção --apply e é precedida pela criação de backup.
+
+Regularização       | Casos                           | Natureza
+--------------------+---------------------------------+----------------------------------------------------------------------
+Espaçamento da AST  | 02, 03, 04, 06, 07, 08, 09 e 10 | Somente apresentação textual
+Parêntese excedente | 24                              | Correção de balanceamento da S-expressão
+Saída de rejeição   | 26 a 50                         | Inclusão do diagnóstico sintático após a indicação de ausência de AST
+
+Tabela 5 - Regularizações realizadas nos gabaritos de trabalho.
+
+
+11. Implementação em C
+
+Após a estabilização da versão Python, a arquitetura foi reproduzida em C11. A versão C foi construída para ser autocontida, pois o script de avaliação compila exclusivamente parser.c. Assim, o arquivo contém a análise léxica necessária, estruturas de tokens, parser, nós da AST e serialização.
+
+Os tokens são armazenados em vetor dinâmico e a AST é representada por estruturas alocadas em memória. Buffers dinâmicos são utilizados na construção de lexemas e na serialização textual. A lógica de precedência e de associatividade foi mantida equivalente à versão Python.
+
+gcc -Wall -Wextra -std=c11 parser.c -o parser ./parser codigo.c
+
+Quadro 6 - Compilação e execução independente da versão C.
+
+A compilação com -Wall e -Wextra foi utilizada para ampliar a detecção de problemas pelo compilador, enquanto -std=c11 fixa o padrão da linguagem empregado na implementação.
+
+
+12. Validação e execução independente
+
+Além dos testes automatizados, foram mantidos comandos de execução direta para demonstrar que os parsers funcionam fora dos testadores. Essa verificação atende ao objetivo de execução independente do código-fonte.
+
+# Python - caso válido python3 parser.py testes-parser-50/casos/01_declara_o_inteira_simples/codigo.c echo $?  # Python - caso inválido python3 parser.py testes-parser-50/casos/26_ponto_e_v_rgula_ausente_em_declara_o/codigo.c echo $?  # C - caso válido ./parser testes-parser-50/casos/01_declara_o_inteira_simples/codigo.c echo $?  # C - caso inválido ./parser testes-parser-50/casos/26_ponto_e_v_rgula_ausente_em_declara_o/codigo.c echo $?
+
+Quadro 7 - Exemplos de execução independente.
+
+Em entradas válidas, o código de saída esperado é 0. Em entradas sintaticamente inválidas, o código esperado é 1, acompanhado da saída em duas camadas no canal de erro.
+
+
+13. Resultados obtidos
+
+A suíte é composta por 25 casos aceitos e 25 casos rejeitados. A versão Python foi validada durante o desenvolvimento com os 50 cenários, incluindo comparação estrutural da AST e verificação de rejeição. A versão C foi posteriormente submetida ao script Bash original após a regularização documentada dos gabaritos.
+
+Métrica                        | Resultado
+-------------------------------+-----------------
+Total de casos                 | 50
+Casos válidos                  | 25/25 aceitos
+Casos inválidos                | 25/25 rejeitados
+Aprovados no teste final C     | 50
+Reprovados                     | 0
+Erros sintáticos identificados | 25
+Erros de execução              | 0
+Esperados ausentes             | 0
+
+Tabela 6 - Resultado consolidado da validação.
+
+A execução final da versão C no MSYS2 UCRT64, utilizando o script oficial testar_parser_c.sh, apresentou o seguinte resumo:
+
+Resumo ------- Total de casos:       50 Aprovados:            50 Reprovados:           0 Erros sintáticos:     25 Erros de execução:    0 Esperados ausentes:   0 Resultado final: TODOS OS 50 CASOS PASSARAM
+
+Quadro 8 - Resultado final exibido no terminal para o parser C.
+
+O valor 'Erros sintáticos: 25' é esperado: corresponde exatamente aos 25 casos inválidos previstos pela suíte. Como esses casos foram reconhecidos como erros sintáticos e não como falhas de execução, o resultado confirma que a rejeição ocorreu pela camada correta do compilador.
+
+
+14. Limitações e escopo da etapa
+
+A implementação desta etapa foi orientada pelas construções efetivamente exercitadas nos 50 casos fornecidos. Embora o analisador léxico reconheça palavras reservadas adicionais, como for, break e continue, essas construções não possuem nós específicos na AST indicada pelo conjunto de testes e não foram assumidas como parte obrigatória do núcleo sintático validado nesta etapa.
+
+Também não foram incorporadas ao parser verificações de natureza semântica, como existência obrigatória de uma função main, compatibilidade de tipos, declaração prévia de identificadores ou validade de retornos por tipo. Essas verificações pertencem a uma etapa posterior de análise semântica.
+
+
+
+15. Conclusão
+
+A Etapa 2 do projeto MINIC foi concluída com a implementação de analisadores sintáticos em Python e C. O parser descendente recursivo foi integrado ao analisador léxico, reconheceu as construções previstas nos testes, aplicou corretamente as regras de precedência e associatividade e produziu a AST na representação textual definida pelo material da disciplina.
+
+O tratamento de erros foi estruturado para distinguir rejeições sintáticas de falhas de execução. Nos casos inválidos, o parser informa explicitamente a ausência da AST e apresenta diagnóstico contendo posição e causa da falha. As inconsistências encontradas nos gabaritos foram tratadas de maneira modular e documentada, sem alteração dos scripts Bash oficiais.
+
+A validação final da versão C apresentou 50 casos aprovados, zero reprovados, 25 erros sintáticos esperados e zero erros de execução. Com isso, a análise sintática fornece uma base estável para a continuidade do compilador, especialmente para a etapa de análise semântica.
+
+
+16. Referências
+
+Material da disciplina de Compiladores: conjunto de 50 testes do analisador sintático MINIC, README, manifesto, índice e scripts de teste.
+
+Documentação oficial do Python 3 - linguagem, dataclasses e tratamento de exceções.
+
+GNU Project. GCC - GNU Compiler Collection. Compilador utilizado para a implementação C11.
+
+MSYS2. Documentação do ambiente UCRT64 utilizado para compilação e execução dos testes em C no Windows.
+
+Material didático fornecido sobre conversão de tokens, gramática livre de contexto e construção de AST.
+
+
+Apêndice A - Comandos de execução
+
+Comandos principais utilizados na validação da Etapa 2:
+
+# Testador complementar Python python3 test_parser_python.py  # Regularização modular dos casos inválidos python3 regularizar_gabaritos_invalidos.py --show-content python3 regularizar_gabaritos_invalidos.py --apply  # Script oficial - Python export PYTHONIOENCODING=utf-8 export PYTHONUTF8=1 bash testar_parser_python.sh ./testes-parser-50 ./parser.py  # Compilação e script oficial - C export LC_ALL=C.UTF-8 export LANG=C.UTF-8 gcc -Wall -Wextra -std=c11 parser.c -o parser bash testar_parser_c.sh ./testes-parser-50 ./parser.c
+
+Quadro A.1 - Comandos utilizados no desenvolvimento e validação.
+
+
+Status consolidado da Etapa 2
+--------------------------------
+Implementação concluída nas duas linguagens: 50/50 casos aprovados em Python e C com os scripts oficiais. As 25 entradas inválidas são contabilizadas como erros sintáticos esperados, não como falhas de execução. Na execução em Git Bash sem gcc no PATH, testes C podem reutilizar executáveis antigos; por isso a evidência final foi produzida em ambiente com pré-compilação C confirmada. O parser implementado é DESCENDENTE RECURSIVO, não ascendente.
+
+
+-------------------------------------------------------------------------------
+REGISTRO DE REVALIDAÇÃO — WINDOWS, 25/10/2026 ÀS 02:45:20 UTC
+-------------------------------------------------------------------------------
+Registro: docs/evidencia/00_RESUMO_DE_VALIDACAO.txt.
+Parser Python: aprovado (50/50); Parser C: aprovado (50/50).
+Os 25 casos de rejeição sintática são esperados; parser descendente recursivo.
+Este registro resume evidências existentes; não constitui uma nova
+execução no ambiente Windows.

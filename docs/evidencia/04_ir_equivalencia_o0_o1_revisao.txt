@@ -1,0 +1,75 @@
+VALIDAÇÃO COMPLEMENTAR — EQUIVALÊNCIA DAS SAÍDAS IR PYTHON x C
+Data/hora UTC: 2026-10-25T01:14:42+0000
+Ambiente: contêiner Linux de análise (não é saída do Git Bash do usuário)
+Diretório: testes-scanner-minic_codes/
+Comando: python3 validar_equivalencia_ir.py
+Escopo: 30 arquivos de entrada, nos modos -O0 e -O1.
+Comparação: retorno, stdout e stderr; somente CRLF/LF são normalizados.
+Status: 0 — 60/60 comparações idênticas.
+
+[OK][-O0] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P01/P01.c
+[OK][-O0] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P02/P02.c
+[OK][-O0] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P03/P03.c
+[OK][-O0] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P04/P04.c
+[OK][-O0] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P05/P05.c
+[OK][-O0] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P06/P06.c
+[OK][-O0] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P07/P07.c
+[OK][-O0] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P08/P08.c
+[OK][-O0] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P09/P09.c
+[OK][-O0] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P10/P10.c
+[OK][-O0] minic-ir-test-cases/testes/02-erros/E01/E01.c
+[OK][-O0] minic-ir-test-cases/testes/02-erros/E02/E02.c
+[OK][-O0] minic-ir-test-cases/testes/02-erros/E03/E03.c
+[OK][-O0] minic-ir-test-cases/testes/02-erros/E04/E04.c
+[OK][-O0] minic-ir-test-cases/testes/02-erros/E05/E05.c
+[OK][-O0] minic-ir-test-cases/testes/02-erros/E06/E06.c
+[OK][-O0] minic-ir-test-cases/testes/02-erros/E07/E07.c
+[OK][-O0] minic-ir-test-cases/testes/02-erros/E08/E08.c
+[OK][-O0] minic-ir-test-cases/testes/02-erros/E09/E09.c
+[OK][-O0] minic-ir-test-cases/testes/02-erros/E10/E10.c
+[OK][-O0] minic-ir-test-cases/testes/03-otimizacoes/O01/O01.c
+[OK][-O0] minic-ir-test-cases/testes/03-otimizacoes/O02/O02.c
+[OK][-O0] minic-ir-test-cases/testes/03-otimizacoes/O03/O03.c
+[OK][-O0] minic-ir-test-cases/testes/03-otimizacoes/O04/O04.c
+[OK][-O0] minic-ir-test-cases/testes/03-otimizacoes/O05/O05.c
+[OK][-O0] minic-ir-test-cases/testes/03-otimizacoes/O06/O06.c
+[OK][-O0] minic-ir-test-cases/testes/03-otimizacoes/O07/O07.c
+[OK][-O0] minic-ir-test-cases/testes/03-otimizacoes/O08/O08.c
+[OK][-O0] minic-ir-test-cases/testes/03-otimizacoes/O09/O09.c
+[OK][-O0] minic-ir-test-cases/testes/03-otimizacoes/O10/O10.c
+Resumo -O0: 30/30 equivalentes.
+
+[OK][-O1] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P01/P01.c
+[OK][-O1] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P02/P02.c
+[OK][-O1] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P03/P03.c
+[OK][-O1] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P04/P04.c
+[OK][-O1] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P05/P05.c
+[OK][-O1] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P06/P06.c
+[OK][-O1] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P07/P07.c
+[OK][-O1] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P08/P08.c
+[OK][-O1] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P09/P09.c
+[OK][-O1] minic-ir-test-cases/testes/01-validos-sem-otimizacao/P10/P10.c
+[OK][-O1] minic-ir-test-cases/testes/02-erros/E01/E01.c
+[OK][-O1] minic-ir-test-cases/testes/02-erros/E02/E02.c
+[OK][-O1] minic-ir-test-cases/testes/02-erros/E03/E03.c
+[OK][-O1] minic-ir-test-cases/testes/02-erros/E04/E04.c
+[OK][-O1] minic-ir-test-cases/testes/02-erros/E05/E05.c
+[OK][-O1] minic-ir-test-cases/testes/02-erros/E06/E06.c
+[OK][-O1] minic-ir-test-cases/testes/02-erros/E07/E07.c
+[OK][-O1] minic-ir-test-cases/testes/02-erros/E08/E08.c
+[OK][-O1] minic-ir-test-cases/testes/02-erros/E09/E09.c
+[OK][-O1] minic-ir-test-cases/testes/02-erros/E10/E10.c
+[OK][-O1] minic-ir-test-cases/testes/03-otimizacoes/O01/O01.c
+[OK][-O1] minic-ir-test-cases/testes/03-otimizacoes/O02/O02.c
+[OK][-O1] minic-ir-test-cases/testes/03-otimizacoes/O03/O03.c
+[OK][-O1] minic-ir-test-cases/testes/03-otimizacoes/O04/O04.c
+[OK][-O1] minic-ir-test-cases/testes/03-otimizacoes/O05/O05.c
+[OK][-O1] minic-ir-test-cases/testes/03-otimizacoes/O06/O06.c
+[OK][-O1] minic-ir-test-cases/testes/03-otimizacoes/O07/O07.c
+[OK][-O1] minic-ir-test-cases/testes/03-otimizacoes/O08/O08.c
+[OK][-O1] minic-ir-test-cases/testes/03-otimizacoes/O09/O09.c
+[OK][-O1] minic-ir-test-cases/testes/03-otimizacoes/O10/O10.c
+Resumo -O1: 30/30 equivalentes.
+
+RESULTADO: 60/60 comparações; divergências=0
+

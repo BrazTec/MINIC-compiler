@@ -1,0 +1,60 @@
+REGISTRO DE DESENVOLVIMENTO (nao corresponde a execucao no Windows)
+UTC: 2026-10-25T02:33:58+00:00
+SISTEMA: Linux-6.18.55-x86_64-with-glibc2.41
+Python: 3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]
+GCC: gcc (Debian 14.2.0-19) 14.2.0
+
+GABARITO DE REFERENCIA / CRITERIO DO PROFESSOR (somente leitura):
+Resultado: COMPILAR COM SUCESSO
+Alvo: dobra de condição constante + eliminação de código inalcançável
+IR de referência (-O0):
+  t1 = 3 < 5
+  ifFalse t1 goto L_else
+  r = 11
+  goto L_end
+L_else:
+  r = 22
+L_end:
+  print r
+IR otimizada esperada (-O1), equivalente:
+  print 11
+  return 0
+
+
+===== O07: Python -O0 | exit 0 =====
+func main
+  t1 = 3 < 5
+  ifFalse t1 goto L1_else
+  r = 11
+  goto L2_endif
+L1_else:
+  r = 22
+L2_endif:
+  print r
+  return 0
+endfunc
+
+===== O07: Python -O1 | exit 0 =====
+func main
+  print 11
+  return 0
+endfunc
+
+===== O07: C -O0 | exit 0 =====
+func main
+  t1 = 3 < 5
+  ifFalse t1 goto L1_else
+  r = 11
+  goto L2_endif
+L1_else:
+  r = 22
+L2_endif:
+  print r
+  return 0
+endfunc
+
+===== O07: C -O1 | exit 0 =====
+func main
+  print 11
+  return 0
+endfunc

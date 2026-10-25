@@ -1,0 +1,96 @@
+REGISTRO DE DESENVOLVIMENTO (nao corresponde a execucao no Windows)
+UTC: 2026-10-25T02:33:58+00:00
+SISTEMA: Linux-6.18.55-x86_64-with-glibc2.41
+Python: 3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]
+GCC: gcc (Debian 14.2.0-19) 14.2.0
+
+GABARITO DE REFERENCIA / CRITERIO DO PROFESSOR (somente leitura):
+Resultado: COMPILAR COM SUCESSO
+Alvo: redução de força / atualização incremental de expressão relacionada à indução
+IR de referência (-O0):
+  i = 0
+L_test:
+  t1 = i < 5
+  ifFalse t1 goto L_end
+  t2 = i * 2
+  dobro = t2
+  print dobro
+  t3 = i + 1
+  i = t3
+  goto L_test
+IR otimizada possível (-O1), equivalente:
+  i = 0
+  dobro = 0
+L_test:
+  t1 = i < 5
+  ifFalse t1 goto L_end
+  print dobro
+  i = i + 1
+  dobro = dobro + 2
+  goto L_test
+L_end:
+  return 0
+Critério: validar equivalência para cada iteração; diferentes implementações podem preferir não aplicar esta otimização. Não exigir forma textual idêntica.
+
+
+===== O09: Python -O0 | exit 0 =====
+func main
+  i = 0
+L1_while:
+  t1 = i < 5
+  ifFalse t1 goto L2_endwhile
+  t2 = i * 2
+  dobro = t2
+  print dobro
+  t3 = i + 1
+  i = t3
+  goto L1_while
+L2_endwhile:
+  return 0
+endfunc
+
+===== O09: Python -O1 | exit 0 =====
+func main
+  i = 0
+L1_while:
+  t1 = i < 5
+  ifFalse t1 goto L2_endwhile
+  t2 = i + i
+  print t2
+  t3 = i + 1
+  i = t3
+  goto L1_while
+L2_endwhile:
+  return 0
+endfunc
+
+===== O09: C -O0 | exit 0 =====
+func main
+  i = 0
+L1_while:
+  t1 = i < 5
+  ifFalse t1 goto L2_endwhile
+  t2 = i * 2
+  dobro = t2
+  print dobro
+  t3 = i + 1
+  i = t3
+  goto L1_while
+L2_endwhile:
+  return 0
+endfunc
+
+===== O09: C -O1 | exit 0 =====
+func main
+  i = 0
+L1_while:
+  t1 = i < 5
+  ifFalse t1 goto L2_endwhile
+  t2 = i + i
+  print t2
+  t3 = i + 1
+  i = t3
+  goto L1_while
+L2_endwhile:
+  return 0
+endfunc

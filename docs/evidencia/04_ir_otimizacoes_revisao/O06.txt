@@ -1,0 +1,48 @@
+REGISTRO DE DESENVOLVIMENTO (nao corresponde a execucao no Windows)
+UTC: 2026-10-25T02:33:58+00:00
+SISTEMA: Linux-6.18.55-x86_64-with-glibc2.41
+Python: 3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]
+GCC: gcc (Debian 14.2.0-19) 14.2.0
+
+GABARITO DE REFERENCIA / CRITERIO DO PROFESSOR (somente leitura):
+Resultado: COMPILAR COM SUCESSO
+Alvo: reaching definitions/propagação global de constantes e dobra
+IR de referência (-O0):
+  limite = 8
+  t1 = limite + 2
+  resultado = t1
+  print resultado
+IR otimizada esperada (-O1), equivalente:
+  print 10
+  return 0
+
+
+===== O06: Python -O0 | exit 0 =====
+func main
+  limite = 8
+  t1 = limite + 2
+  resultado = t1
+  print resultado
+  return 0
+endfunc
+
+===== O06: Python -O1 | exit 0 =====
+func main
+  print 10
+  return 0
+endfunc
+
+===== O06: C -O0 | exit 0 =====
+func main
+  limite = 8
+  t1 = limite + 2
+  resultado = t1
+  print resultado
+  return 0
+endfunc
+
+===== O06: C -O1 | exit 0 =====
+func main
+  print 10
+  return 0
+endfunc

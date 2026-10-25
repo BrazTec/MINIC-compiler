@@ -1,0 +1,59 @@
+CASO: P03
+CATEGORIA: validos
+ARQUIVO: testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P03/P03.c
+GABARITO: testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P03/P03.txt
+SHA256_GABARITO: 6313f18acdb8988a2b7aa0bc78dc5433847c59f45388e7156888f45022f47538
+DATA_UTC: 2026-10-25T02:46:47+00:00
+PLATAFORMA: Windows-11-10.0.26300-SP0
+RESULTADO: APROVADO NOS CRITÉRIOS AUTOMATIZADOS
+
+VERIFICAÇÕES REALIZADAS:
+  - Python -O0: TAC parseável/executável; 13 instruções/linhas; efeitos observáveis=['38']
+  - C -O0: TAC parseável/executável; 13 instruções/linhas; efeitos observáveis=['38']
+  - -O0: saída e código de retorno iguais em Python e C
+
+ATENÇÃO: este relatório não confunde equivalência de execução com
+comprovação de cada transformação-alvo de otimização. A IR canônica
+do professor é referência estrutural, não saída a reproduzir literalmente.
+
+===========================================================================
+EXECUÇÃO: Python -O0
+COMANDO: C:/msys64/ucrt64/bin/python3.exe minic.py --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P03/P03.c
+EXIT_STATUS: 0
+STDOUT:
+func combinar(x, y)
+  t1 = x * 10
+  t2 = t1 + y
+  return t2
+endfunc
+func main
+  param 3
+  param 8
+  t1 = call combinar, 2
+  r = t1
+  print r
+  return 0
+endfunc
+STDERR:
+(vazio)
+
+===========================================================================
+EXECUÇÃO: C -O0
+COMANDO: C:/Users/eduar/AppData/Local/Temp/minic-ir-casos-2i70nvn5/minic_ir_casos.exe --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P03/P03.c
+EXIT_STATUS: 0
+STDOUT:
+func combinar(x, y)
+  t1 = x * 10
+  t2 = t1 + y
+  return t2
+endfunc
+func main
+  param 3
+  param 8
+  t1 = call combinar, 2
+  r = t1
+  print r
+  return 0
+endfunc
+STDERR:
+(vazio)

@@ -1,0 +1,6 @@
+COMANDO: gcc -Wall -Wextra -std=c11 minic.c -o C:/Users/eduar/AppData/Local/Temp/minic-ir-casos-2i70nvn5/minic_ir_casos.exe
+EXIT_STATUS: 0
+STDOUT:
+
+STDERR:
+

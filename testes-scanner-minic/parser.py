@@ -85,6 +85,12 @@ class While(ASTNode):
 
 
 @dataclass
+class Break(ASTNode):
+    line: int = 0
+    column: int = 0
+
+
+@dataclass
 class Return(ASTNode):
     value: Optional[ASTNode]
 
@@ -720,6 +726,16 @@ class Parser:
                 self.parse_while_statement()
             )
 
+        # for/ break reconhecidos apenas no pipeline integrado;
+        # o parser isolado da Etapa 2 mantém seu contrato original.
+        if self.semantic_mode and self.match("FOR"):
+            return self.parse_for_statement()
+
+        if self.semantic_mode and self.match("BREAK"):
+            token = self.previous()
+            self.consume("SEMICOLON", "esperado ';' após break")
+            return Break(token.line, token.column)
+
         # ----------------------------------------------
         # return
         # ----------------------------------------------
@@ -838,6 +854,24 @@ class Parser:
             body
         )
 
+
+    # ========================================================
+    # FOR: dessugar em bloco + while para compartilhar AST/SDD
+    # ========================================================
+    def parse_for_statement(self) -> Block:
+        self.consume("LPAREN", "esperado '(' após for")
+        init = None
+        if not self.check("SEMICOLON"):
+            init = ExprStmt(self.parse_expression())
+        self.consume("SEMICOLON", "esperado ';' após inicializador do for")
+        condition = Lit("bool", True, "true") if self.check("SEMICOLON") else self.parse_expression()
+        self.consume("SEMICOLON", "esperado ';' após condição do for")
+        step = None if self.check("RPAREN") else ExprStmt(self.parse_expression())
+        self.consume("RPAREN", "esperado ')' após for")
+        body = self.parse_statement()
+        repeated = Block([body, step] if step is not None else [body])
+        result = While(condition, repeated)
+        return Block(([init] if init is not None else []) + [result])
 
     # ========================================================
     # RETURN

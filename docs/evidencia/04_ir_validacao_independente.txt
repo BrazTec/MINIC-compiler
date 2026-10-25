@@ -1,0 +1,43 @@
+ETAPA: IR — validação complementar
+DATA_UTC: 2026-10-25T02:45:20+00:00
+AMBIENTE: Windows-11-10.0.26300-SP0
+COMANDO: C:/msys64/ucrt64/bin/python3.exe validar_ir_independente.py
+RESULTADO DE EXECUÇÃO: APROVADO NO TESTADOR
+
+PRÉ-COMPILAÇÃO: gcc -Wall -Wextra -std=c11 minic.c -o C:/Users/eduar/AppData/Local/Temp/minic-preflight-2etc8x5x/minic.exe
+STATUS PRÉ-COMPILAÇÃO: 0
+
+SAÍDA COMPLETA:
+[OK] P01 (01-validos-sem-otimizacao)
+[OK] P02 (01-validos-sem-otimizacao)
+[OK] P03 (01-validos-sem-otimizacao)
+[OK] P04 (01-validos-sem-otimizacao)
+[OK] P05 (01-validos-sem-otimizacao)
+[OK] P06 (01-validos-sem-otimizacao)
+[OK] P07 (01-validos-sem-otimizacao)
+[OK] P08 (01-validos-sem-otimizacao)
+[OK] P09 (01-validos-sem-otimizacao)
+[OK] P10 (01-validos-sem-otimizacao)
+[OK] E01 (02-erros)
+[OK] E02 (02-erros)
+[OK] E03 (02-erros)
+[OK] E04 (02-erros)
+[OK] E05 (02-erros)
+[OK] E06 (02-erros)
+[OK] E07 (02-erros)
+[OK] E08 (02-erros)
+[OK] E09 (02-erros)
+[OK] E10 (02-erros)
+[OK] O01 (03-otimizacoes)
+[OK] O02 (03-otimizacoes)
+[OK] O03 (03-otimizacoes)
+[OK] O04 (03-otimizacoes)
+[OK] O05 (03-otimizacoes)
+[OK] O06 (03-otimizacoes)
+[OK] O07 (03-otimizacoes)
+[OK] O08 (03-otimizacoes)
+[OK] O09 (03-otimizacoes)
+[OK] O10 (03-otimizacoes)
+RESULTADO VALIDACAO INDEPENDENTE: 30/30; reprovados=0
+
+EXIT_STATUS: 0

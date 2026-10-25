@@ -1,0 +1,50 @@
+REGISTRO DE DESENVOLVIMENTO (nao corresponde a execucao no Windows)
+UTC: 2026-10-25T02:33:58+00:00
+SISTEMA: Linux-6.18.55-x86_64-with-glibc2.41
+Python: 3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]
+GCC: gcc (Debian 14.2.0-19) 14.2.0
+
+GABARITO DE REFERENCIA / CRITERIO DO PROFESSOR (somente leitura):
+Resultado: COMPILAR COM SUCESSO
+Alvo: propagação de constantes + simplificação/dobra algébrica
+IR de referência (-O0):
+  a = 2 + 3
+  b = a * 4
+  print b
+IR otimizada esperada (-O1), equivalente:
+  print 20
+  return 0
+Verificar: remoção de temporários/atribuições tornou-se possível; resultado observável permanece 20.
+
+
+===== O01: Python -O0 | exit 0 =====
+func main
+  t1 = 2 + 3
+  a = t1
+  t2 = a * 4
+  b = t2
+  print b
+  return 0
+endfunc
+
+===== O01: Python -O1 | exit 0 =====
+func main
+  print 20
+  return 0
+endfunc
+
+===== O01: C -O0 | exit 0 =====
+func main
+  t1 = 2 + 3
+  a = t1
+  t2 = a * 4
+  b = t2
+  print b
+  return 0
+endfunc
+
+===== O01: C -O1 | exit 0 =====
+func main
+  print 20
+  return 0
+endfunc

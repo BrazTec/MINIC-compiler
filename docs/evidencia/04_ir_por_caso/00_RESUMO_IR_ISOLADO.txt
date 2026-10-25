@@ -1,0 +1,46 @@
+EVIDÊNCIAS ISOLADAS ETAPA 4 — MINIC
+Data/hora UTC: 2026-10-25T02:46:50+00:00
+Diretório: E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/docs/evidencia/04_ir_por_caso
+PLATAFORMA: Windows-11-10.0.26300-SP0
+Critérios: README minic-ir-test-cases/README.md
+Arquivos oficiais .sh e .txt NÃO modificados.
+
+VALIDOS: 10/10 critérios automatizados aprovados
+ERROS: 10/10 critérios automatizados aprovados
+OTIMIZACOES: 10/10 critérios automatizados aprovados
+
+RESULTADO ISOLADO: 30/30; reprovados=0
+
+OTIMIZAÇÕES — sinais observados (NÃO avaliação completa das transformações):
+  O01 Python: IR -O1 difere de -O0
+  O01 C: IR -O1 difere de -O0
+  O02 Python: IR -O1 difere de -O0
+  O02 C: IR -O1 difere de -O0
+  O03 Python: IR -O1 difere de -O0
+  O03 C: IR -O1 difere de -O0
+  O04 Python: IR -O1 difere de -O0
+  O04 C: IR -O1 difere de -O0
+  O05 Python: IR -O1 difere de -O0
+  O05 C: IR -O1 difere de -O0
+  O06 Python: IR -O1 difere de -O0
+  O06 C: IR -O1 difere de -O0
+  O07 Python: IR -O1 difere de -O0
+  O07 C: IR -O1 difere de -O0
+  O08 Python: IR -O1 difere de -O0
+  O08 C: IR -O1 difere de -O0
+  O09 Python: IR -O1 difere de -O0
+  O09 C: IR -O1 difere de -O0
+  O10 Python: IR -O1 difere de -O0
+  O10 C: IR -O1 difere de -O0
+
+LIMITAÇÕES:
+- Os casos P verificam TAC parseável e efeitos equivalentes entre Python e C.
+- Os casos E verificam rejeição/categoria e presença de diagnóstico.
+- Os casos O verificam execução equivalente nos dois níveis e registram alterações.
+- Não há comparação byte a byte com os gabaritos do professor.
+- Não é provada automaticamente cada otimização-alvo O01..O10.
+- A comparação com C nativo e a avaliação dos 30 exemplos seguem também
+  em validar_ir_independente.py; ver a evidência complementar separada.
+- A equivalência de saída Python/C semântica não substitui análise de fluxo
+  de controle e transformação estrutural, especialmente em loops.
+- Os testadores .sh oficiais de IR permanecem preservados e relatados à parte.

@@ -56,6 +56,7 @@ typedef struct {
     SemDiagnosticList diagnostics;
     SemScope global_scope;
     ASTNode *current_function;
+    int loop_depth;
 } SemanticAnalyzerC;
 
 static SemType sem_type(const char *base, bool is_array)
@@ -530,6 +531,14 @@ static SemType sem_infer_call(
     }
 
     symbol = sem_scope_resolve(scope, node->as.call.callee->as.identifier.name);
+    if (symbol == NULL &&
+        (strcmp(node->as.call.callee->as.identifier.name, "print") == 0 ||
+         strcmp(node->as.call.callee->as.identifier.name, "read") == 0)) {
+        for (i = 0; i < node->as.call.arguments.count; ++i) {
+            (void)sem_infer_expr(analyzer, node->as.call.arguments.items[i], scope, "expressão");
+        }
+        return sem_type("void", false);
+    }
     if (symbol == NULL) {
         sem_error(
             analyzer,
@@ -796,6 +805,13 @@ static SemType sem_infer_expr(
                     }
                     return sem_type("int", false);
                 }
+                {
+                    char left_type[64], right_type[64];
+                    sem_error(analyzer, "SEM015", node->as.binary.left->line,
+                        node->as.binary.left->column,
+                        "Operadores aritméticos exigem operandos numéricos (recebeu %s e %s).",
+                        sem_type_label(left, left_type), sem_type_label(right, right_type));
+                }
                 return SEM_ERROR_TYPE;
             }
 
@@ -936,12 +952,18 @@ static void sem_analyze_var_decl(
     );
 
     if (declaration->as.var_decl.size != NULL) {
-        (void)sem_infer_expr(
+        SemType dimension = sem_infer_expr(
             analyzer,
             declaration->as.var_decl.size,
             scope,
             "expressão"
         );
+        if (!sem_is_error(dimension) &&
+            !sem_type_equal(dimension, sem_type("int", false))) {
+            sem_error(analyzer, "SEM016", declaration->as.var_decl.size->line,
+                      declaration->as.var_decl.size->column,
+                      "Dimensão do vetor deve ser int.");
+        }
     }
 
     if (declaration->as.var_decl.initializer != NULL) {
@@ -1123,9 +1145,18 @@ static void sem_analyze_statement(
                 node->as.while_stmt.condition,
                 condition_type
             );
+            analyzer->loop_depth++;
             sem_analyze_statement(analyzer, node->as.while_stmt.body, scope);
+            analyzer->loop_depth--;
             break;
         }
+
+        case NODE_BREAK:
+            if (analyzer->loop_depth == 0) {
+                sem_error(analyzer, "SEM014", node->line, node->column,
+                          "break fora de um laço.");
+            }
+            break;
 
         case NODE_RETURN:
             sem_analyze_return(analyzer, node, scope);
@@ -1208,6 +1239,7 @@ static void sem_analyzer_init(SemanticAnalyzerC *analyzer)
     sem_diag_init(&analyzer->diagnostics);
     sem_scope_init(&analyzer->global_scope, NULL);
     analyzer->current_function = NULL;
+    analyzer->loop_depth = 0;
 }
 
 static void sem_analyzer_free(SemanticAnalyzerC *analyzer)
@@ -1316,7 +1348,7 @@ static void sem_write_result(const SemDiagnosticList *diagnostics)
     for (i = 0; i < diagnostics->count; ++i) {
         const SemDiagnostic *diag = &diagnostics->items[i];
         if (i > 0) {
-            fwrite("\r\n", 1, 2, stdout);
+            fwrite("\n", 1, 1, stdout);
         }
         fprintf(
             stdout,
@@ -1329,7 +1361,7 @@ static void sem_write_result(const SemDiagnosticList *diagnostics)
     }
 
     if (diagnostics->count > 0) {
-        fwrite("\r\n", 1, 2, stdout);
+        fwrite("\n", 1, 1, stdout);
         snprintf(
             summary,
             sizeof(summary),

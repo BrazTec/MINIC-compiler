@@ -1,0 +1,25 @@
+ETAPA: IR — otimizacoes O01-O10
+DATA_UTC: 2026-10-25T02:45:20+00:00
+AMBIENTE: Windows-11-10.0.26300-SP0
+COMANDO: C:/msys64/ucrt64/bin/python3.exe validar_otimizacoes_o01_o10.py
+RESULTADO DE EXECUÇÃO: APROVADO NO TESTADOR
+
+PRÉ-COMPILAÇÃO: gcc -Wall -Wextra -std=c11 minic.c -o C:/Users/eduar/AppData/Local/Temp/minic-preflight-2etc8x5x/minic.exe
+STATUS PRÉ-COMPILAÇÃO: 0
+
+SAÍDA COMPLETA:
+[OK] O01: TAC -O0/-O1 e transformação-alvo verificadas (Python/C)
+[OK] O02: TAC -O0/-O1 e transformação-alvo verificadas (Python/C)
+[OK] O03: TAC -O0/-O1 e transformação-alvo verificadas (Python/C)
+[OK] O04: TAC -O0/-O1 e transformação-alvo verificadas (Python/C)
+[OK] O05: TAC -O0/-O1 e transformação-alvo verificadas (Python/C)
+[OK] O06: TAC -O0/-O1 e transformação-alvo verificadas (Python/C)
+[OK] O07: TAC -O0/-O1 e transformação-alvo verificadas (Python/C)
+[OK] O08: TAC -O0/-O1 e transformação-alvo verificadas (Python/C)
+[OK] O09: TAC -O0/-O1 e transformação-alvo verificadas (Python/C)
+[OK] O10: TAC -O0/-O1 e transformação-alvo verificadas (Python/C)
+[OK] CSE simbólica Python: multiplicação reaproveitada
+[OK] CSE simbólica C: multiplicação reaproveitada
+RESULTADO OTIMIZACOES O01-O10: 10/10; falhas=0
+
+EXIT_STATUS: 0

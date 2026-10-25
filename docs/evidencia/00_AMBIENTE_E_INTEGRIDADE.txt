@@ -1,0 +1,8 @@
+Data/hora UTC: 2026-10-25T02:45:20+00:00
+Sistema: Windows-11-10.0.26300-SP0
+Python: 3.14.7 (main, Aug  8 2026, 21:15:19)  [MINGW GCC UCRT 16.2.0 64 bit (AMD64)]
+Bash: C:\Program Files\Git\usr\bin/bash.EXE
+GCC: C:\msys64\ucrt64\bin/gcc.EXE
+Diretório analisado: E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes
+Testadores .sh íntegros (SHA-256): 16/16
+gcc --version (status 0): gcc (Rev3, Built by MSYS2 project) 16.2.0

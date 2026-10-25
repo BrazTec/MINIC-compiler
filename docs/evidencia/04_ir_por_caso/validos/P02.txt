@@ -1,0 +1,53 @@
+CASO: P02
+CATEGORIA: validos
+ARQUIVO: testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P02/P02.c
+GABARITO: testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P02/P02.txt
+SHA256_GABARITO: 9fbd66a7660773c2db868821ab20137a24828079b547ed7ab7ad8b18d85db665
+DATA_UTC: 2026-10-25T02:46:47+00:00
+PLATAFORMA: Windows-11-10.0.26300-SP0
+RESULTADO: APROVADO NOS CRITÉRIOS AUTOMATIZADOS
+
+VERIFICAÇÕES REALIZADAS:
+  - Python -O0: TAC parseável/executável; 10 instruções/linhas; efeitos observáveis=['8']
+  - C -O0: TAC parseável/executável; 10 instruções/linhas; efeitos observáveis=['8']
+  - -O0: saída e código de retorno iguais em Python e C
+
+ATENÇÃO: este relatório não confunde equivalência de execução com
+comprovação de cada transformação-alvo de otimização. A IR canônica
+do professor é referência estrutural, não saída a reproduzir literalmente.
+
+===========================================================================
+EXECUÇÃO: Python -O0
+COMANDO: C:/msys64/ucrt64/bin/python3.exe minic.py --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P02/P02.c
+EXIT_STATUS: 0
+STDOUT:
+func main
+  a = 18
+  b = 5
+  c = 2
+  t1 = b * c
+  t2 = a - t1
+  r = t2
+  print r
+  return 0
+endfunc
+STDERR:
+(vazio)
+
+===========================================================================
+EXECUÇÃO: C -O0
+COMANDO: C:/Users/eduar/AppData/Local/Temp/minic-ir-casos-2i70nvn5/minic_ir_casos.exe --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P02/P02.c
+EXIT_STATUS: 0
+STDOUT:
+func main
+  a = 18
+  b = 5
+  c = 2
+  t1 = b * c
+  t2 = a - t1
+  r = t2
+  print r
+  return 0
+endfunc
+STDERR:
+(vazio)

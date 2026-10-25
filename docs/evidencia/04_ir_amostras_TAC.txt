@@ -1,0 +1,231 @@
+
+===== P01 -O0 (Python, status 0) =====
+func main
+  a = 7
+  b = 4
+  t1 = a + b
+  c = t1
+  print c
+  return 0
+endfunc
+
+
+===== P01 -O1 (Python, status 0) =====
+func main
+  a = 7
+  b = 4
+  c = 11
+  print 11
+  return 0
+endfunc
+
+
+===== P06 -O0 (Python, status 0) =====
+func main
+  produto = 1
+  i = 1
+L1_while:
+  t1 = i <= 3
+  ifFalse t1 goto L2_endwhile
+  t2 = produto * i
+  produto = t2
+  t3 = i + 1
+  i = t3
+  goto L1_while
+L2_endwhile:
+  print produto
+  return 0
+endfunc
+
+
+===== P06 -O1 (Python, status 0) =====
+func main
+  produto = 1
+  i = 1
+L1_while:
+  t1 = i <= 3
+  ifFalse t1 goto L2_endwhile
+  t2 = produto * i
+  produto = t2
+  t3 = i + 1
+  i = t3
+  goto L1_while
+L2_endwhile:
+  print produto
+  return 0
+endfunc
+
+
+===== P07 -O0 (Python, status 0) =====
+func main
+  alloc v, 3
+  i = 1
+  t1 = i * 1
+  store v[t1], 12
+  t2 = i * 1
+  t3 = load v[t2]
+  x = t3
+  print x
+  return 0
+endfunc
+
+
+===== P07 -O1 (Python, status 0) =====
+func main
+  alloc v, 3
+  i = 1
+  store v[1], 12
+  t3 = load v[i]
+  x = t3
+  print t3
+  return 0
+endfunc
+
+
+===== P09 -O0 (Python, status 0) =====
+func main
+  x = 5
+  x#2 = 8
+  print x#2
+  print x
+  return 0
+endfunc
+
+
+===== P09 -O1 (Python, status 0) =====
+func main
+  x = 5
+  x#2 = 8
+  print 8
+  print 5
+  return 0
+endfunc
+
+
+===== P10 -O0 (Python, status 0) =====
+func fatorial(n)
+  t1 = n <= 1
+  ifFalse t1 goto L1_endif
+  return 1
+L1_endif:
+  t2 = n - 1
+  param t2
+  t3 = call fatorial, 1
+  t4 = n * t3
+  return t4
+endfunc
+func main
+  param 5
+  t1 = call fatorial, 1
+  r = t1
+  print r
+  return 0
+endfunc
+
+
+===== P10 -O1 (Python, status 0) =====
+func fatorial(n)
+  t1 = n <= 1
+  ifFalse t1 goto L1_endif
+  return 1
+L1_endif:
+  t2 = n - 1
+  param t2
+  t3 = call fatorial, 1
+  t4 = n * t3
+  return t4
+endfunc
+func main
+  param 5
+  t1 = call fatorial, 1
+  r = t1
+  print t1
+  return 0
+endfunc
+
+
+===== O01 -O0 (Python, status 0) =====
+func main
+  t1 = 2 + 3
+  a = t1
+  t2 = a * 4
+  b = t2
+  print b
+  return 0
+endfunc
+
+
+===== O01 -O1 (Python, status 0) =====
+func main
+  a = 5
+  b = 20
+  print 20
+  return 0
+endfunc
+
+
+===== O08 -O0 (Python, status 0) =====
+func main
+  i = 0
+  x = 6
+  y = 7
+  soma = 0
+L1_while:
+  t1 = i < 4
+  ifFalse t1 goto L2_endwhile
+  t2 = x * y
+  t3 = soma + t2
+  soma = t3
+  t4 = i + 1
+  i = t4
+  goto L1_while
+L2_endwhile:
+  print soma
+  return 0
+endfunc
+
+
+===== O08 -O1 (Python, status 0) =====
+func main
+  i = 0
+  x = 6
+  y = 7
+  soma = 0
+L1_while:
+  t1 = i < 4
+  ifFalse t1 goto L2_endwhile
+  t2 = x * y
+  t3 = soma + t2
+  soma = t3
+  t4 = i + 1
+  i = t4
+  goto L1_while
+L2_endwhile:
+  print soma
+  return 0
+endfunc
+
+
+===== E07 -O0 (Python, status 4) =====
+SEM014 — linha 2, coluna 5: break fora de um laço.
+
+
+===== E07 -O1 (Python, status 4) =====
+SEM014 — linha 2, coluna 5: break fora de um laço.
+
+
+===== E09 -O0 (Python, status 3) =====
+Erro sintático na linha 3, coluna 5: esperado ';' após a declaração. Encontrado 'return'.
+
+
+===== E09 -O1 (Python, status 3) =====
+Erro sintático na linha 3, coluna 5: esperado ';' após a declaração. Encontrado 'return'.
+
+
+===== E10 -O0 (Python, status 2) =====
+Erro léxico na linha 2, coluna 15: UNKNOWN_SYMBOL ('@')
+
+
+===== E10 -O1 (Python, status 2) =====
+Erro léxico na linha 2, coluna 15: UNKNOWN_SYMBOL ('@')
+

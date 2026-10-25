@@ -1,0 +1,44 @@
+ETAPA: IR — casos isolados (README)
+DATA_UTC: 2026-10-25T02:45:20+00:00
+AMBIENTE: Windows-11-10.0.26300-SP0
+COMANDO: C:/msys64/ucrt64/bin/python3.exe validar_ir_por_caso.py
+RESULTADO DE EXECUÇÃO: APROVADO NO TESTADOR
+
+PRÉ-COMPILAÇÃO: gcc -Wall -Wextra -std=c11 minic.c -o C:/Users/eduar/AppData/Local/Temp/minic-preflight-2etc8x5x/minic.exe
+STATUS PRÉ-COMPILAÇÃO: 0
+
+SAÍDA COMPLETA:
+[OK][validos] P01 — evidência individual gerada
+[OK][validos] P02 — evidência individual gerada
+[OK][validos] P03 — evidência individual gerada
+[OK][validos] P04 — evidência individual gerada
+[OK][validos] P05 — evidência individual gerada
+[OK][validos] P06 — evidência individual gerada
+[OK][validos] P07 — evidência individual gerada
+[OK][validos] P08 — evidência individual gerada
+[OK][validos] P09 — evidência individual gerada
+[OK][validos] P10 — evidência individual gerada
+[OK][erros] E01 — evidência individual gerada
+[OK][erros] E02 — evidência individual gerada
+[OK][erros] E03 — evidência individual gerada
+[OK][erros] E04 — evidência individual gerada
+[OK][erros] E05 — evidência individual gerada
+[OK][erros] E06 — evidência individual gerada
+[OK][erros] E07 — evidência individual gerada
+[OK][erros] E08 — evidência individual gerada
+[OK][erros] E09 — evidência individual gerada
+[OK][erros] E10 — evidência individual gerada
+[OK][otimizacoes] O01 — evidência individual gerada
+[OK][otimizacoes] O02 — evidência individual gerada
+[OK][otimizacoes] O03 — evidência individual gerada
+[OK][otimizacoes] O04 — evidência individual gerada
+[OK][otimizacoes] O05 — evidência individual gerada
+[OK][otimizacoes] O06 — evidência individual gerada
+[OK][otimizacoes] O07 — evidência individual gerada
+[OK][otimizacoes] O08 — evidência individual gerada
+[OK][otimizacoes] O09 — evidência individual gerada
+[OK][otimizacoes] O10 — evidência individual gerada
+RESULTADO IR ISOLADO: 30/30; reprovados=0
+Evidências em: E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/docs/evidencia/04_ir_por_caso
+
+EXIT_STATUS: 0

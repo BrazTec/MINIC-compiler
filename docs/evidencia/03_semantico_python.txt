@@ -1,0 +1,31 @@
+ETAPA: Semântico Python
+DATA_UTC: 2026-10-25T02:45:20+00:00
+AMBIENTE: Windows-11-10.0.26300-SP0
+COMANDO: bash testes_semanticos_py.sh minic.py ./minic-testes-semanticos
+RESULTADO DE EXECUÇÃO: APROVADO NO TESTADOR
+
+SAÍDA COMPLETA:
+[OK]     ./minic-testes-semanticos/01_promocao_numerica.c
+[OK]     ./minic-testes-semanticos/02_sombreamento_lexico.c
+[OK]     ./minic-testes-semanticos/03_logica_e_comparacoes.c
+[OK]     ./minic-testes-semanticos/04_vetores_e_parametro_array.c
+[OK]     ./minic-testes-semanticos/05_lacos_aninhados.c
+[OK]     ./minic-testes-semanticos/06_recursao_e_retorno.c
+[OK]     ./minic-testes-semanticos/07_void_como_comando.c
+[OK]     ./minic-testes-semanticos/08_retornos_nos_dois_ramos.c
+[OK]     ./minic-testes-semanticos/09_atribuicao_associativa.c
+[OK]     ./minic-testes-semanticos/10_vetor_bool_e_funcoes.c
+[OK]     ./minic-testes-semanticos/11_estreitamento_implicito.c
+[OK]     ./minic-testes-semanticos/12_identificador_nao_declarado.c
+[OK]     ./minic-testes-semanticos/13_declaracao_duplicada.c
+[OK]     ./minic-testes-semanticos/14_condicao_nao_booleana.c
+[OK]     ./minic-testes-semanticos/15_indice_float.c
+[OK]     ./minic-testes-semanticos/16_aridade_incorreta.c
+[OK]     ./minic-testes-semanticos/17_tipos_de_argumentos.c
+[OK]     ./minic-testes-semanticos/18_uso_de_void_como_valor.c
+[OK]     ./minic-testes-semanticos/19_retorno_e_cobertura.c
+[OK]     ./minic-testes-semanticos/20_destino_nao_atribuivel.c
+
+Resultado: 20/20 aprovados; 0 reprovados.
+
+EXIT_STATUS: 0

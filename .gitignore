@@ -1,6 +1,20 @@
-__pycache__
-.git
-scanner.exe
-semantic.exe
-parser.exe
-minic.exe
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# C / Windows
+*.exe
+*.o
+*.obj
+*.out
+/testes-scanner-minic_codes/parser
+/testes-scanner-minic_codes/scanner
+/testes-scanner-minic_codes/minic
+/testes-scanner-minic/parser
+/testes-scanner-minic/scanner
+/testes-scanner-minic/minic
+
+# arquivos temporários
+*.tmp
+.DS_Store

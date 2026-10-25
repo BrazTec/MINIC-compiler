@@ -12,7 +12,7 @@ from typing import Optional
 
 from parser import (
     ASTNode, Program, Function, Parameter, Block, VarDecl, If, While, Return,
-    ExprStmt, Assign, Binary, Unary, Call, Index, Id, Lit,
+    ExprStmt, Assign, Binary, Unary, Call, Index, Id, Lit, Break,
 )
 
 
@@ -77,6 +77,7 @@ class SemanticAnalyzer:
         self.diagnostics: list[Diagnostic] = []
         self.global_scope = Scope()
         self.current_function: Optional[Function] = None
+        self.loop_depth = 0
 
     # --------------------------------------------------------
     # API pública
@@ -284,7 +285,16 @@ class SemanticAnalyzer:
         if isinstance(node, While):
             condition_type = self._infer_expr(node.condition, scope)
             self._check_condition("while", node.condition, condition_type)
-            self._analyze_statement(node.body, scope)
+            self.loop_depth += 1
+            try:
+                self._analyze_statement(node.body, scope)
+            finally:
+                self.loop_depth -= 1
+            return
+
+        if isinstance(node, Break):
+            if self.loop_depth == 0:
+                self._error("SEM014", node.line, node.column, "break fora de um laço.")
             return
 
         if isinstance(node, Return):
@@ -411,6 +421,8 @@ class SemanticAnalyzer:
                     if left.base == "float" or right.base == "float":
                         return TypeRef("float")
                     return TypeRef("int")
+                self._error("SEM015", *self._position(node.left),
+                            f"Operadores aritméticos exigem operandos numéricos (recebeu {left.label()} e {right.label()}).")
                 return ERROR_TYPE
 
             if node.operator in {"<", ">", "<=", ">="}:
@@ -515,6 +527,12 @@ class SemanticAnalyzer:
             for argument in node.arguments:
                 self._infer_expr(argument, scope)
             return ERROR_TYPE
+
+        # Intrínsecas de E/S da linguagem, não declarações de usuário.
+        if node.callee.name in {"print", "read"} and scope.resolve(node.callee.name) is None:
+            for argument in node.arguments:
+                self._infer_expr(argument, scope)
+            return VOID_TYPE
 
         symbol = scope.resolve(node.callee.name)
         if symbol is None:
@@ -637,7 +655,10 @@ class SemanticAnalyzer:
             return
         # Avalia para capturar identificadores não declarados. A suíte não
         # define um código específico para dimensão de vetor incompatível.
-        self._infer_expr(declaration.size, scope)
+        dimension_type = self._infer_expr(declaration.size, scope)
+        if dimension_type != ERROR_TYPE and dimension_type != TypeRef("int"):
+            self._error("SEM016", *self._position(declaration.size),
+                        f"Dimensão do vetor deve ser int; recebeu {dimension_type.label()}.")
 
     @staticmethod
     def _is_numeric(type_ref: TypeRef) -> bool:
@@ -774,4 +795,4 @@ def render_semantic_result(diagnostics: list[Diagnostic]) -> str:
             f"Análise semântica concluída: {count} {noun}; programa rejeitado."
         )
 
-    return "\r\n".join(lines)
+    return "\n".join(lines)

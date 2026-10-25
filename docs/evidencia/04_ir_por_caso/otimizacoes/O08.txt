@@ -1,0 +1,123 @@
+CASO: O08
+CATEGORIA: otimizacoes
+ARQUIVO: testes-scanner-minic_codes/minic-ir-test-cases/testes/03-otimizacoes/O08/O08.c
+GABARITO: testes-scanner-minic_codes/minic-ir-test-cases/testes/03-otimizacoes/O08/O08.txt
+SHA256_GABARITO: acea86bf1c1554fc3b9cddb087c40d35c031c2a3391335fab0192878fe57bb86
+DATA_UTC: 2026-10-25T02:46:49+00:00
+PLATAFORMA: Windows-11-10.0.26300-SP0
+RESULTADO: APROVADO NOS CRITÉRIOS AUTOMATIZADOS
+
+VERIFICAÇÕES REALIZADAS:
+  - Python -O0: TAC parseável/executável; 18 instruções/linhas; efeitos observáveis=['168']
+  - C -O0: TAC parseável/executável; 18 instruções/linhas; efeitos observáveis=['168']
+  - -O0: saída e código de retorno iguais em Python e C
+  - Python -O1: TAC parseável/executável; 16 instruções/linhas; efeitos observáveis=['168']
+  - C -O1: TAC parseável/executável; 16 instruções/linhas; efeitos observáveis=['168']
+  - -O1: saída e código de retorno iguais em Python e C
+  - Python: IR -O1 ALTERADA em relação a -O0; linhas -O0=18, -O1=16
+  - C: IR -O1 ALTERADA em relação a -O0; linhas -O0=18, -O1=16
+  - Transformação-alvo específica: requer confronto estrutural/inspeção; saída alterada não garante aplicação da otimização nomeada no gabarito
+
+ATENÇÃO: este relatório não confunde equivalência de execução com
+comprovação de cada transformação-alvo de otimização. A IR canônica
+do professor é referência estrutural, não saída a reproduzir literalmente.
+
+===========================================================================
+EXECUÇÃO: Python -O0
+COMANDO: C:/msys64/ucrt64/bin/python3.exe minic.py --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/03-otimizacoes/O08/O08.c
+EXIT_STATUS: 0
+STDOUT:
+func main
+  i = 0
+  x = 6
+  y = 7
+  soma = 0
+L1_while:
+  t1 = i < 4
+  ifFalse t1 goto L2_endwhile
+  t2 = x * y
+  t3 = soma + t2
+  soma = t3
+  t4 = i + 1
+  i = t4
+  goto L1_while
+L2_endwhile:
+  print soma
+  return 0
+endfunc
+STDERR:
+(vazio)
+
+===========================================================================
+EXECUÇÃO: C -O0
+COMANDO: C:/Users/eduar/AppData/Local/Temp/minic-ir-casos-2i70nvn5/minic_ir_casos.exe --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/03-otimizacoes/O08/O08.c
+EXIT_STATUS: 0
+STDOUT:
+func main
+  i = 0
+  x = 6
+  y = 7
+  soma = 0
+L1_while:
+  t1 = i < 4
+  ifFalse t1 goto L2_endwhile
+  t2 = x * y
+  t3 = soma + t2
+  soma = t3
+  t4 = i + 1
+  i = t4
+  goto L1_while
+L2_endwhile:
+  print soma
+  return 0
+endfunc
+STDERR:
+(vazio)
+
+===========================================================================
+EXECUÇÃO: Python -O1
+COMANDO: C:/msys64/ucrt64/bin/python3.exe minic.py --ir -O1 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/03-otimizacoes/O08/O08.c
+EXIT_STATUS: 0
+STDOUT:
+func main
+  i = 0
+  soma = 0
+  t2 = 42
+L1_while:
+  t1 = i < 4
+  ifFalse t1 goto L2_endwhile
+  t3 = soma + t2
+  soma = t3
+  t4 = i + 1
+  i = t4
+  goto L1_while
+L2_endwhile:
+  print soma
+  return 0
+endfunc
+STDERR:
+(vazio)
+
+===========================================================================
+EXECUÇÃO: C -O1
+COMANDO: C:/Users/eduar/AppData/Local/Temp/minic-ir-casos-2i70nvn5/minic_ir_casos.exe --ir -O1 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/03-otimizacoes/O08/O08.c
+EXIT_STATUS: 0
+STDOUT:
+func main
+  i = 0
+  soma = 0
+  t2 = 42
+L1_while:
+  t1 = i < 4
+  ifFalse t1 goto L2_endwhile
+  t3 = soma + t2
+  soma = t3
+  t4 = i + 1
+  i = t4
+  goto L1_while
+L2_endwhile:
+  print soma
+  return 0
+endfunc
+STDERR:
+(vazio)

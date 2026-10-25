@@ -1,0 +1,359 @@
+===============================================================================
+MINIC - COMPILADOR
+RELATÓRIO DA ETAPA 4 — PRODUÇÃO DE CÓDIGO INTERMEDIÁRIO (IR/TAC)
+===============================================================================
+Disciplina: Compiladores
+Implementações: Python 3 e C11
+STATUS: IMPLEMENTADA E VALIDADA FUNCIONALMENTE, COM RESSALVA NO PROCEDIMENTO DE TESTE OFICIAL.
+
+Foram implementadas as rotinas de geração de código intermediário de três endereços e as otimizações correspondentes aos casos O01–O10, em Python e C.
+
+A validação realizada no ambiente Windows confirmou aprovação nos testes funcionais, na equivalência entre implementações e nas verificações específicas de otimização. As três etapas anteriores permaneceram aprovadas.
+
+Os dois scripts oficiais de IR apresentam reprovações decorrentes da divergência entre sua metodologia de comparação textual e os critérios de avaliação estrutural e semântica descritos no README da suíte.
+
+Os arquivos oficiais foram preservados integralmente, sem alterações.
+
+1. INTRODUÇÃO
+-------------------------------------------------------------------------------
+A quarta etapa do compilador MINIC introduz a produção de uma representação
+intermediária (Intermediate Representation, IR) após as análises léxica,
+sintática e semântica. A representação adotada é o código de três endereços
+(Three-Address Code, TAC), com temporários, rótulos, desvios condicionais,
+chamadas, retornos e instruções para vetores.
+
+O trabalho partiu do projeto previamente desenvolvido e evitou reescrever
+scanner, parser e semântico. Os componentes foram ampliados estritamente
+quando a nova suíte exigiu construções não cobertas, como o comando for e o
+break. A estrutura de parser utilizada em ambas as linguagens permanece
+DESCENDENTE RECURSIVA, e não um parser ascendente.
+
+2. OBJETIVOS
+-------------------------------------------------------------------------------
+- Integrar geração de TAC ao pipeline scanner → parser → semântico → IR.
+- Preservar o contrato histórico dos testadores das três primeiras etapas.
+- Produzir IR apenas para programas semanticamente válidos.
+- Manter equivalência entre as implementações C e Python.
+- Representar precedência, aritmética, relacionais, booleanos, funções,
+  recursão, if, while, for, vetores, sombreamento e retornos.
+- Oferecer execução -O0 e -O1, com otimizações seguras e limites declarados.
+- Preservar integralmente arquivos .sh oficiais e gabaritos originais.
+- Gerar evidências auditáveis de execução e uma documentação rastreável.
+
+3. ORGANIZAÇÃO DOS COMPONENTES
+-------------------------------------------------------------------------------
+Pasta canônica: testes-scanner-minic_codes/
+
+Python:
+    scanner.py  →  parser.py  →  semantic.py  →  ir.py
+                         minic.py (driver)
+
+C:
+    scanner integrado no parser.c  →  parser.c  →  semantic.c  →  ir.c
+                                   minic.c (driver)
+
+O driver C inclui parser.c, semantic.c e ir.c na unidade de tradução porque
+os scripts oficiais foram projetados para compilar somente o arquivo minic.c.
+Essa integração mantém separação lógica dos módulos, mas não corresponde a
+bibliotecas compiladas e vinculadas separadamente. Essa limitação é declarada.
+
+Os diretórios docs/relatorio/, docs/evidencia/ e docs/historico/ concentram os
+relatórios, os registros dos testes e o histórico das revisões. A pasta
+historicamente duplicada testes-scanner-minic/ foi preservada e teve os
+módulos fontes sincronizados com a pasta canônica, sem substituir fixtures.
+
+4. INTERFACE DE EXECUÇÃO
+-------------------------------------------------------------------------------
+Sem --ir, a saída da Etapa 3 é preservada:
+    python3 minic.py arquivo.c
+    ./minic arquivo.c
+
+Produção de TAC:
+    python3 minic.py --ir -O0 arquivo.c
+    python3 minic.py --ir -O1 arquivo.c
+    ./minic --ir -O0 arquivo.c
+    ./minic --ir -O1 arquivo.c
+
+Compilação C11:
+    gcc -Wall -Wextra -std=c11 minic.c -o minic
+
+Em --ir, códigos de saída:
+    0: programa válido; TAC emitida;
+    2: erro léxico; nenhuma TAC em stdout;
+    3: erro sintático; nenhuma TAC em stdout;
+    4: erro semântico; nenhuma TAC em stdout.
+
+A interpretação desses códigos é exclusiva da interface de IR; a interface
+histórica de análise semântica conserva o comportamento exigido por seus
+testadores oficiais.
+
+5. REPRESENTAÇÃO INTERMEDIÁRIA
+-------------------------------------------------------------------------------
+Exemplo MINIC:
+
+    int main() {
+        int i = 0;
+        int soma = 0;
+        while (i < 4) {
+            soma = soma + i;
+            i = i + 1;
+        }
+        print(soma);
+        return 0;
+    }
+
+TAC emitida (-O0):
+
+    func main
+      i = 0
+      soma = 0
+    L1_while:
+      t1 = i < 4
+      ifFalse t1 goto L2_endwhile
+      t2 = soma + i
+      soma = t2
+      t3 = i + 1
+      i = t3
+      goto L1_while
+    L2_endwhile:
+      print soma
+      return 0
+    endfunc
+
+A condição é reavaliada a cada passagem e o corpo executa somente enquanto
+ela for verdadeira. A TAC utiliza três endereços nas operações aritméticas e
+relacionais, e rótulos explícitos no controle de fluxo.
+
+Em chamadas são usados param/call; em vetores, alloc/load/store. Operações
+booleanas && e || preservam curto-circuito por meio de desvios condicionais.
+Os nomes temporários e rótulos são determinísticos por função. Blocos com
+sombreamento usam nomes internos distintos (ex.: x e x#2).
+
+6. TRADUÇÃO E RELAÇÃO COM A SDD
+-------------------------------------------------------------------------------
+As regras da Etapa 3 determinam tipos e uso permitido de símbolos. A Etapa 4
+visita a AST somente depois da análise semântica bem-sucedida. A descrição
+formal, vinculada às funções reais, consta no documento
+'06_SDD_TRADUCAO_TAC.md'. Os conceitos sintetizados são o lugar do valor
+(E.lugar), a sequência de instruções (S.codigo) e os rótulos de desvio.
+
+Produção E → E1 + E2:
+    t := newTemp()
+    emit(t = lugar(E1) + lugar(E2))
+    E.lugar := t
+
+Produção S → if (E) S1 else S2:
+    ifFalse E.lugar goto L_else
+    codigo(S1)
+    goto L_end
+    L_else:
+    codigo(S2)
+    L_end:
+
+Produção S → while (E) S1:
+    L_test:
+    codigo(E)
+    ifFalse E.lugar goto L_end
+    codigo(S1)
+    goto L_test
+    L_end:
+
+Os atributos são materializados durante a visita à AST; não há um motor
+genérico de avaliação de atributos. Isso não torna o parser ascendente.
+
+7. AMPLIAÇÕES SINTÁTICAS E SEMÂNTICAS
+-------------------------------------------------------------------------------
+O caso P06 exige a construção for. No modo integrado, essa construção é
+convertida para uma estrutura equivalente baseada em while, o que permite
+reutilizar regras existentes de análise e produção de IR. O modo de parser
+isolado (Etapa 2) foi preservado para os respectivos 50 gabaritos.
+
+O caso E07 exige rejeição de break fora de laço. Foi introduzida uma regra
+semântica contextual com diagnóstico SEM014, gerada antes da produção de IR.
+Também foi formalizada a intrínseca print e foram adicionadas rejeições para
+aritmética com tipos não numéricos (SEM015) e dimensões não inteiras (SEM016).
+Essas verificações adicionais não invalidaram as suítes originais da Etapa 3.
+
+8. OTIMIZAÇÕES E LIMITAÇÕES
+-------------------------------------------------------------------------------
+O modo -O0 mantém as instruções da AST sem otimização. O modo -O1
+executa passes conservadores de melhoria da TAC:
+
+    O01: dobra e propagação de constantes .... atendida no caso;
+    O02: simplificação +0/*1 e cópias ....... atendida no caso;
+    O03: remoção de cópias redundantes ....... atendida no caso;
+    O04: DCE de atribuição não observável .... atendida no caso;
+    O05: CSE local em bloco básico .......... atendida; prova simbólica extra;
+    O06: propagação de constantes/dobra ..... atendida no caso;
+    O07: condição constante + poda de CFG ... atendida no caso;
+    O08: LICM de expressão sem efeitos ...... atendida no caso;
+    O09: força reduzida em i * 2 para i+i .. aplicada (opcional no README);
+    O10: código após return inalcançável .... atendida no caso.
+
+Implementação Python: passes sobre instruções TAC estruturadas (ir.py).
+Implementação C: passes sobre TAC textual (ir.c + ir_passes.c), sem subprocessos
+ou dependência do Python. O comando 'gcc ... minic.c' continua suficiente.
+
+Estratégia e proteção de efeitos:
+    - Análise de fluxo de controle intraprocedural para remover nós sem
+      caminho executável, preservando marcadores func/endfunc;
+    - Liveness por sucessores/antecessores para eliminar definições sem uso;
+      chamadas, loads, stores, prints e divisões não são excluídas pelo DCE;
+    - CSE local com invalidação sempre que operandos/definições mudam e em
+      desvios, rótulos, chamadas ou mudanças de memória;
+    - LICM restrita a laços estruturados e operações sem efeitos e sem
+      operandos redefinidos no corpo; não especula divisão ou memória;
+    - Propagação de constantes e cópias dentro de regiões seguras; fatos
+      apagados nos pontos de controle e possíveis efeitos externos;
+    - Redução de força demonstrada como i*2 -> i+i (não usa variáveis de
+      indução sintetizadas ou strength reduction geral).
+
+ATENÇÃO SOBRE O06: o cenário avaliado propaga limite=8 e dobra resultado=10.
+Não há, contudo, um solver completo de reaching definitions nem propagação
+interblocos genérica com junção de estados. O resultado O06 comprova o caso
+alvo, não uma análise global universal. Similarmente LICM, CSE e DCE são
+conservadoras e não equivalem a um otimizador industrial.
+
+A conclusão de conformidade específica foi obtida por
+validar_otimizacoes_o01_o10.py: os 10 casos foram executados e verificados,
+com predicados de transformação explícitos para cada Oxx; um cenário simbólico
+adicional demonstra o CSE mesmo quando não há constantes a dobrar.
+O -O1 de ambas as linguagens coincide nos casos avaliados, mas igualdade de
+TAC não substitui a análise dos demais programas possíveis.
+
+9. AVALIAÇÃO DO PROFESSOR: README VERSUS TESTADORES .SH
+-------------------------------------------------------------------------------
+O pacote oficial contempla 30 fontes de teste e gabaritos de referência:
+    P01–P10: entradas válidas em -O0;
+    E01–E10: entradas inválidas e classes de diagnóstico;
+    O01–O10: entradas para examinar otimizações em -O1.
+
+O README fornecido com a suíte especifica que a IR de referência NÃO exige
+igualdade textual byte a byte. Devem ser avaliados estrutura, fluxo de
+controle, operandos, efeitos observáveis, comportamento e classes de erro.
+O documento também permite renomear temporários/rótulos e orienta comparar
+as saídas -O0 e -O1. A otimização O09 (redução de força) é opcional.
+
+A leitura do código original dos dois testadores .sh confirma que:
+
+    a) chamam a entrada como 'minic arquivo.c' (sem --ir, -O0 ou -O1);
+    b) aplicam grep para retirar algumas linhas classificadas como mensagens;
+    c) exigem igualdade dos textos restantes via 'cmp -s';
+    d) não avaliam diretamente a equivalência de fluxo ou de comportamento
+       nem executam os modos -O0 e -O1 separadamente;
+    e) comparam as saídas com arquivos que incluem descrição de resultados,
+       critérios e exemplos de TAC, não apenas instruções intermediárias.
+
+A interface do MINIC, por compatibilidade com a Etapa 3, não emite IR sem
+--ir. Assim, a execução usada nos testadores não solicita a geração de TAC,
+enquanto o gabarito inclui uma IR de referência. A desigualdade textual
+pode ocorrer mesmo quando a TAC gerada em --ir é funcionalmente correta.
+
+RESULTADO OBSERVADO DOS TESTADORES .SH ORIGINAIS:
+    test_ir_python.sh: P 0/10; E 0/10; O 0/10; total 0/30; exit 1.
+    test_ir_c.sh:      P 0/10; E 0/10; O 0/10; total 0/30; exit 1.
+
+INTERPRETAÇÃO:
+    - Estes dois testadores NÃO FORAM APROVADOS; seus resultados negativos
+      permanecem registrados sem reclassificação.
+    - Um resultado 0/30 por comparação textual não equivale, isoladamente,
+      à demonstração de 30 defeitos de geração de TAC.
+    - A aprovação em validadores complementares também não substitui, por
+      si só, os resultados dos .sh oficiais ou uma avaliação do docente.
+    - Não se deve modificar os scripts oficiais, seus gabaritos ou a TAC
+      produzida para reproduzir artificialmente o texto das referências.
+
+INTEGRIDADE DOS TESTADORES:
+    16/16 arquivos .sh preservados e sem divergência de SHA-256, conforme
+    verificar_scripts_oficiais.py na execução apresentada pelo aluno.
+
+O procedimento de avaliação da Etapa 4 deve, portanto, utilizar também os
+comandos -O0/-O1 e inspeção estrutural previstos no README. Recomenda-se
+esclarecer com o professor qual método prevalece na correção formal, dada
+a divergência entre a orientação textual e a automatização recebida.
+
+10. VERIFICAÇÃO TÉCNICA COMPLEMENTAR E EVIDÊNCIAS ISOLADAS
+-------------------------------------------------------------------------------
+Foram desenvolvidas verificações complementares sem modificar os testadores
+ou os gabaritos do professor:
+
+    1) validar_ir_independente.py
+       - análise dos 30 programas, incluindo aceitação, rejeição e tipos
+         de erro, geração/execução de TAC e equivalência de comportamento
+         entre -O0 e -O1 nos exemplos disponíveis;
+       - resultado registrado: 30/30; código de saída 0.
+
+    2) validar_equivalencia_ir.py
+       - compara saídas, diagnósticos e códigos de saída das implementações
+         Python e C em -O0 e -O1 para os 30 arquivos;
+       - resultado registrado: 60/60 comparações; divergências=0.
+
+    3) validar_ir_por_caso.py
+       - P01–P10: execução individual de IR -O0 nas duas linguagens;
+       - E01–E10: rejeição e classe/código de erro;
+       - O01–O10: IR -O0 e -O1 e resultados observáveis;
+       - salva, em docs/evidencia/04_ir_por_caso/, comandos, saídas e status;
+       - resultado no Windows em 25/10/2026: 30/30; exit 0.
+
+    4) validar_otimizacoes_o01_o10.py
+       - executa os dez casos em -O0/-O1 nas versões Python e C;
+       - avalia a TAC com predicados estruturais específicos por caso;
+       - verifica resultados observáveis com interpretador de TAC;
+       - inclui CSE simbólica com operandos definidos por parâmetros;
+       - resultado no Windows em 25/10/2026: 10/10, exit 0, e CSE PY/C;
+       - evidência: docs/evidencia/04_ir_otimizacoes_o01_o10.txt.
+
+    5) gerar_evidencias.py
+       - executa as suítes anteriores, os .sh originais e as verificações
+         complementares, incluindo a auditoria estrutural O01–O10;
+       - grava 04_ir_otimizacoes_o01_o10.txt junto das outras evidências.
+
+
+11. REGRESSÃO DAS ETAPAS 1 A 3
+-------------------------------------------------------------------------------
+Os registros de evidência foram produzidos executando o código deste pacote
+em ambiente identificado. Cada arquivo contém comando, saída e status do
+processo; resultados em Git Bash com gcc inicialmente indisponível não
+comprovam nova compilação C:
+
+  ETAPA 1 — Scanner:
+      Python: 18/18, 0 falhas;
+      C:      18/18, 0 falhas.
+
+  ETAPA 2 — Parser:
+      Python: 50/50, 0 falhas; 25 erros sintáticos esperados;
+      C:      50/50, 0 falhas; 25 erros sintáticos esperados.
+
+  ETAPA 3 — Semântico:
+      Python: 20/20, 0 falhas;
+      C:      20/20, 0 falhas.
+
+  ETAPA 4 — TAC:
+      Complementar: 30/30;
+      Scripts oficiais de IR: 0/30 (incompatibilidade de contrato descrita).
+
+12. CONCLUSÃO E PRÓXIMOS PASSOS
+-------------------------------------------------------------------------------
+A Etapa 4 implementa um gerador TAC real em Python e C, integrado às etapas
+anteriores e funcional nos 30 cenários avaliados por testes complementares.
+A análise de regressão preserva o comportamento de scanner, parser e
+semântico. As transformações O01–O10 agora foram demonstradas nos casos examinados;
+O09 foi aplicado em forma simples, mesmo sendo opcional. Fora desse conjunto,
+os passes são conservadores e permanecem limitações de análise global. Ainda
+há incompatibilidade entre os scripts oficiais de IR e o README da suíte.
+
+-------------------------------------------------------------------------------
+REGISTRO CONSOLIDADO DA ENTREGA — 25/10/2026, 02:45:20 UTC
+-------------------------------------------------------------------------------
+Ambiente observado: Windows 11, Python 3.14.7, GCC UCRT 16.2.0.
+A execução local registrou as seguintes situações:
+    - Scanner, parser e semântico Python/C: aprovados.
+    - IR independente: aprovado (30/30).
+    - IR por caso P/E/O: aprovado (30/30).
+    - Equivalência Python/C: aprovada (60/60, modos -O0 e -O1).
+    - Otimizações específicas O01–O10: aprovadas (10/10).
+    - Scripts oficiais de IR: reprovados (0/30 Python; 0/30 C).
+    - Arquivos .sh preservados: 16/16 (SHA-256).
+Os valores acima referem-se às evidências anexas, não a uma nova execução
+no sistema Windows. Há distinção entre avaliação técnica complementar e
+aprovação dos .sh oficiais, ainda não obtida.

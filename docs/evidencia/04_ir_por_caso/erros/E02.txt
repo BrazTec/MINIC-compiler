@@ -1,0 +1,35 @@
+CASO: E02
+CATEGORIA: erros
+ARQUIVO: testes-scanner-minic_codes/minic-ir-test-cases/testes/02-erros/E02/E02.c
+GABARITO: testes-scanner-minic_codes/minic-ir-test-cases/testes/02-erros/E02/E02.txt
+SHA256_GABARITO: 7f3109b3e46d7d5e364f5196120605c5773a486ce38e15e0f0e4b5e4acfd9782
+DATA_UTC: 2026-10-25T02:46:47+00:00
+PLATAFORMA: Windows-11-10.0.26300-SP0
+RESULTADO: APROVADO NOS CRITÉRIOS AUTOMATIZADOS
+
+VERIFICAÇÕES REALIZADAS:
+  - -O0: saída e código de retorno iguais em Python e C
+  - Categoria exigida no gabarito: retorno 4
+  - Diagnóstico conferido por presença/rejeição, não por redação idêntica
+
+ATENÇÃO: este relatório não confunde equivalência de execução com
+comprovação de cada transformação-alvo de otimização. A IR canônica
+do professor é referência estrutural, não saída a reproduzir literalmente.
+
+===========================================================================
+EXECUÇÃO: Python -O0
+COMANDO: C:/msys64/ucrt64/bin/python3.exe minic.py --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/02-erros/E02/E02.c
+EXIT_STATUS: 4
+STDOUT:
+(vazio)
+STDERR:
+SEM002 — linha 3, coluna 9: “x” já declarado neste escopo; declaração anterior na linha 2, coluna 9 (tipo int).
+
+===========================================================================
+EXECUÇÃO: C -O0
+COMANDO: C:/Users/eduar/AppData/Local/Temp/minic-ir-casos-2i70nvn5/minic_ir_casos.exe --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/02-erros/E02/E02.c
+EXIT_STATUS: 4
+STDOUT:
+(vazio)
+STDERR:
+SEM002 — linha 3, coluna 9: “x” já declarado neste escopo; declaração anterior na linha 2, coluna 9 (tipo int).

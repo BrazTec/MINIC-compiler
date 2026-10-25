@@ -1,0 +1,65 @@
+CASO: P08
+CATEGORIA: validos
+ARQUIVO: testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P08/P08.c
+GABARITO: testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P08/P08.txt
+SHA256_GABARITO: 8fab1d2e299905a8e5f533b25b937b63e391b320a6cdcd13fc6d2cb21fe7bc51
+DATA_UTC: 2026-10-25T02:46:47+00:00
+PLATAFORMA: Windows-11-10.0.26300-SP0
+RESULTADO: APROVADO NOS CRITÉRIOS AUTOMATIZADOS
+
+VERIFICAÇÕES REALIZADAS:
+  - Python -O0: TAC parseável/executável; 16 instruções/linhas; efeitos observáveis=['1']
+  - C -O0: TAC parseável/executável; 16 instruções/linhas; efeitos observáveis=['1']
+  - -O0: saída e código de retorno iguais em Python e C
+
+ATENÇÃO: este relatório não confunde equivalência de execução com
+comprovação de cada transformação-alvo de otimização. A IR canônica
+do professor é referência estrutural, não saída a reproduzir literalmente.
+
+===========================================================================
+EXECUÇÃO: Python -O0
+COMANDO: C:/msys64/ucrt64/bin/python3.exe minic.py --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P08/P08.c
+EXIT_STATUS: 0
+STDOUT:
+func main
+  p = true
+  q = false
+  ifFalse p goto L1_bool_false
+  ifTrue q goto L1_bool_false
+  t1 = true
+  goto L2_bool_end
+L1_bool_false:
+  t1 = false
+L2_bool_end:
+  r = t1
+  ifFalse r goto L3_endif
+  print 1
+L3_endif:
+  return 0
+endfunc
+STDERR:
+(vazio)
+
+===========================================================================
+EXECUÇÃO: C -O0
+COMANDO: C:/Users/eduar/AppData/Local/Temp/minic-ir-casos-2i70nvn5/minic_ir_casos.exe --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P08/P08.c
+EXIT_STATUS: 0
+STDOUT:
+func main
+  p = true
+  q = false
+  ifFalse p goto L1_bool_false
+  ifTrue q goto L1_bool_false
+  t1 = true
+  goto L2_bool_end
+L1_bool_false:
+  t1 = false
+L2_bool_end:
+  r = t1
+  ifFalse r goto L3_endif
+  print 1
+L3_endif:
+  return 0
+endfunc
+STDERR:
+(vazio)

@@ -14,6 +14,7 @@
 #pragma GCC diagnostic ignored "-Wformat"
 #pragma GCC diagnostic ignored "-Wformat-extra-args"
 #include "semantic.c"
+#include "ir.c"
 
 #ifdef _WIN32
 #include <fcntl.h>
@@ -43,14 +44,27 @@ int main(int argc, char **argv)
     SemanticAnalyzerC analyzer;
     int status;
 
-    if (argc != 2) {
-        fprintf(stderr, "Uso: ./minic codigo.c\n");
+    bool emit_ir = false;
+    int optimization = 0;
+    const char *filename = NULL;
+    int i;
+
+    for (i = 1; i < argc; ++i) {
+        if (strcmp(argv[i], "--ir") == 0) emit_ir = true;
+        else if (strcmp(argv[i], "-O0") == 0) optimization = 0;
+        else if (strcmp(argv[i], "-O1") == 0) optimization = 1;
+        else if (argv[i][0] == '-' || filename != NULL) {
+            fprintf(stderr, "Uso: ./minic [--ir] [-O0|-O1] codigo.c\n");
+            return 2;
+        } else filename = argv[i];
+    }
+    if (filename == NULL) {
+        fprintf(stderr, "Uso: ./minic [--ir] [-O0|-O1] codigo.c\n");
         return 2;
     }
-
-    source = read_file_normalized(argv[1]);
+    source = read_file_normalized(filename);
     if (source == NULL) {
-        fprintf(stderr, "ERRO: não foi possível ler o arquivo: %s\n", argv[1]);
+        fprintf(stderr, "ERRO: não foi possível ler o arquivo: %s\n", filename);
         return 2;
     }
 
@@ -65,7 +79,7 @@ int main(int argc, char **argv)
         print_lexical_error(&lexer);
         lexer_free(&lexer);
         free(source);
-        return 1;
+        return emit_ir ? 2 : 1;
     }
 
     memset(&parser, 0, sizeof(parser));
@@ -79,17 +93,46 @@ int main(int argc, char **argv)
     ast = parser_parse(&parser);
 
     if (parser.has_error) {
-        print_syntax_rejection(&parser);
+        if (emit_ir) {
+            fprintf(stderr, "Erro sintático na linha %d, coluna %d: %s. Encontrado '%s'.\n",
+                    parser.error_token ? parser.error_token->line : 0,
+                    parser.error_token ? parser.error_token->column : 0,
+                    parser.error_message,
+                    parser.error_token ? (parser.error_token->type == TOK_EOF
+                        ? "EOF" : parser.error_token->lexeme) : "EOF");
+        } else print_syntax_rejection(&parser);
         arena_free(&parser.arena);
         lexer_free(&lexer);
         free(source);
-        return 1;
+        return emit_ir ? 3 : 1;
     }
 
     sem_analyzer_init(&analyzer);
     sem_analyze_program(&analyzer, ast);
-    sem_write_result(&analyzer.diagnostics);
-    status = analyzer.diagnostics.count == 0 ? 0 : 1;
+    if (emit_ir) {
+        if (analyzer.diagnostics.count) {
+            size_t j;
+            for (j = 0; j < analyzer.diagnostics.count; ++j) {
+                SemDiagnostic *d = &analyzer.diagnostics.items[j];
+                fprintf(stderr, "%s — linha %d, coluna %d: %s\n",
+                        d->code, d->line, d->column, d->message);
+            }
+            status = 4;
+        } else {
+            char *tac = ir_generate(ast, optimization);
+            if (optimization == 1) {
+                char *optimized = ir_optimize_advanced(tac);
+                free(tac);
+                tac = optimized;
+            }
+            fwrite(tac, 1, strlen(tac), stdout);
+            free(tac);
+            status = 0;
+        }
+    } else {
+        sem_write_result(&analyzer.diagnostics);
+        status = analyzer.diagnostics.count == 0 ? 0 : 1;
+    }
 
     sem_analyzer_free(&analyzer);
     arena_free(&parser.arena);

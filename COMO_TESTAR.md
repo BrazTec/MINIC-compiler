@@ -1,145 +1,102 @@
-# Como testar o compilador MINIC
+# COMO TESTAR — MINIC
 
-Este guia mostra como executar os testes do compilador MINIC em cada pasta de testes do projeto.
+**Regra de integridade:** nenhum `.sh` oficial e nenhum gabarito deve ser modificado. Todos os comandos abaixo são executados externamente aos scripts. Pasta canônica: `testes-scanner-minic_codes/`.
 
-## 1. Clonar o projeto
+## 1. Preparação
 
-Escolha o diretório onde deseja salvar o projeto e rode:
-
-```bash
-git clone https://github.com/BrazTec/MINIC-compiler.git
-cd MINIC-compiler
-```
-
-## 2. Preparação no Git Bash (Windows)
-
-Se você estiver no Windows usando Git Bash, configure o alias do Python em cada nova sessão antes de executar os testes. Isso evita falhas causadas por diferenças de ambiente entre Linux e Windows.
+Abra MSYS2 UCRT64 ou Git Bash. No Windows, se necessário:
 
 ```bash
-python3() {
-  python "$@"
-}
-export -f python3
+export PATH="/c/msys64/ucrt64/bin:$PATH"
+export PYTHONIOENCODING=utf-8
+export PYTHONUTF8=1
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
+command -v gcc
+gcc --version
 ```
 
-> Importante: execute esse bloco toda vez que abrir uma nova sessão do Git Bash.
+Esse caminho corresponde à instalação MSYS2 utilizada na validação; adapte se o GCC estiver instalado em outro local. **GCC encontrado no PATH** não dispensa conferir a compilação: binários antigos de Linux ou de outras máquinas podem produzir resultados enganosos. Os testes C precisam recompilar localmente os fontes.
 
----
-
-## 3. Testando a pasta `testes-scanner-minic`
-
-Acesse a pasta do projeto:
+Entre na pasta principal de fontes:
 
 ```bash
-cd <Caminho_da_sua_maquina>\MINIC-compiler\testes-scanner-minic
+cd testes-scanner-minic_codes
 ```
 
-Substitua `<Caminho_da_sua_maquina>` pelo caminho real do seu ambiente.
-
-### Analisador léxico
-
-#### Python
+## 2. Etapa 1 — Scanner
 
 ```bash
-./test_scanner_python.sh ./scanner.py ./casos-validos/
-./test_scanner_python.sh ./scanner.py ./casos-invalidos/
+python3 check_fixtures.py
+python3 test_scanner_python.py
+python3 test_scanner_c.py
+
+PASS=0 FAIL=0 WARN=0 bash test_scanner_python.sh
+PASS=0 FAIL=0 WARN=0 bash test_scanner_c.sh
 ```
 
-#### C
+**Por que inicializar os contadores?** Os scripts oficiais utilizam as variáveis `PASS`, `FAIL` e `WARN` sem inicializá-las consistentemente. Passar valores por ambiente evita avisos `printf: : invalid number` e saída não nula em testes cujas 18 comparações estão corretas. O procedimento **não altera os scripts**. Um executável incompatível (mensagem `Exec format error`) deve ser removido e recompilado no Windows, sem alterar o `.sh`.
+
+## 3. Etapa 2 — Parser descendente recursivo
 
 ```bash
-./test_scanner_c.sh ./scanner.c ./casos-validos/
-./test_scanner_c.sh ./scanner.c ./casos-invalidos/
+chmod +x parser.py
+bash testar_parser_python.sh ./testes-parser-50 ./parser.py
+bash testar_parser_c.sh ./testes-parser-50 ./parser.c
 ```
 
-### Analisador sintático (parser)
+São 50 casos em cada linguagem, incluindo 25 erros sintáticos intencionais. O parser **não** é ascendente.
 
-#### Python
+## 4. Etapa 3 — Semântico
 
 ```bash
-./testar_parser_python.sh ./testes-parser-50/ ./parser.py
+bash testes_semanticos_py.sh minic.py ./minic-testes-semanticos
+bash testes_semanticos_c.sh minic.c ./minic-testes-semanticos
 ```
 
-#### C
+São 20 casos em cada linguagem; o driver sem `--ir` mantém o contrato semântico anterior.
+
+## 5. Etapa 4 — IR sem otimização / com otimização
 
 ```bash
-./testar_parser_c.sh ./testes-parser-50/ ./parser.c
+# Python (-O0 e -O1)
+python3 minic.py --ir -O0 minic-ir-test-cases/testes/03-otimizacoes/O01/O01.c
+python3 minic.py --ir -O1 minic-ir-test-cases/testes/03-otimizacoes/O01/O01.c
+
+# C (-O0 e -O1)
+gcc -Wall -Wextra -std=c11 minic.c -o minic
+./minic --ir -O0 minic-ir-test-cases/testes/03-otimizacoes/O01/O01.c
+./minic --ir -O1 minic-ir-test-cases/testes/03-otimizacoes/O01/O01.c
 ```
 
-### Analisador semântico
-
-#### Python
+### Validação complementar conforme o README da suíte
 
 ```bash
-./testes_semanticos_py.sh ./minic.py ./minic-testes-semanticos/
+python3 validar_ir_independente.py             # 30 casos, execução de TAC
+python3 validar_equivalencia_ir.py             # 60 comparações Python/C
+python3 validar_ir_por_caso.py                # P01–P10, E01–E10 e O01–O10
+python3 validar_ir_por_caso.py --case O01     # um caso isolado
+python3 validar_otimizacoes_o01_o10.py        # 10 transformações + CSE simbólica
 ```
 
-#### C
+Os resultados por caso são armazenados em `docs/evidencia/04_ir_por_caso/` a partir da raiz. A igualdade de resultados observáveis não comprova automaticamente otimização; por isso existe também `validar_otimizacoes_o01_o10.py`.
+
+### Testadores `.sh` oficiais de IR: executar e registrar, sem modificar
 
 ```bash
-./testes_semanticos_c.sh ./minic.c ./minic-testes-semanticos/
+bash minic-ir-test-cases/test_ir_python.sh minic.py ./minic-ir-test-cases/testes
+bash minic-ir-test-cases/test_ir_c.sh minic.c ./minic-ir-test-cases/testes
 ```
 
----
+**Resultado observado nesta versão:** `0/30` em cada script (`exit 1`). Os scripts não passam `--ir`/`-O1` e comparam texto literal de gabaritos descritivos, enquanto o README da suíte orienta comparação estrutural e semântica. O resultado não pode ser reclassificado como aprovado. Os verificadores complementares usam o contrato descrito no README e são registrados **separadamente**.
 
-## 4. Testando a pasta `testes-scanner-minic_codes`
+## 6. Integridade e geração das evidências completas
 
-Acesse a segunda pasta de testes:
+Na **raiz `Compilador MINIC/`** (se estiver em `testes-scanner-minic_codes/`, execute `cd ..`):
 
 ```bash
-cd <Caminho_da_sua_maquina>\MINIC-compiler\testes-scanner-minic_codes
+python3 verificar_scripts_oficiais.py
+python3 gerar_evidencias.py
 ```
 
-### Analisador léxico
-
-#### Python
-
-```bash
-./test_scanner_python.sh ./scanner.py ./casos-validos/
-./test_scanner_python.sh ./scanner.py ./casos-invalidos/
-```
-
-#### C
-
-```bash
-./test_scanner_c.sh ./scanner.c ./casos-validos/
-./test_scanner_c.sh ./scanner.c ./casos-invalidos/
-```
-
-### Analisador sintático (parser)
-
-#### Python
-
-```bash
-./testar_parser_python.sh ./testes-parser-50/ ./parser.py
-```
-
-#### C
-
-```bash
-./testar_parser_c.sh ./testes-parser-50/ ./parser.c
-```
-
-### Analisador semântico
-
-#### Python
-
-```bash
-./testes_semanticos_py.sh ./minic.py ./minic-testes-semanticos/
-```
-
-#### C
-
-```bash
-./testes_semanticos_c.sh ./minic.c ./minic-testes-semanticos/
-```
-
----
-
-## Dica final
-
-- Sempre execute o alias `python3()` antes de rodar os testes em uma nova sessão do Git Bash.
-- Se um comando falhar, confirme se o diretório atual está correto e se o nome do script/arquivo está exatamente como mostrado.
-- Para facilitar, você pode manter o alias em um arquivo de configuração do shell e carregá-lo automaticamente quando abrir o Git Bash.
-
-
+`gerar_evidencias.py` registra compilação, comandos, ambiente, stdout/stderr e códigos de saída em `docs/evidencia/`. Inclui as quatro etapas, testes IR por caso, equivalência entre linguagens e as otimizações O01–O10. **A saída agregada pode indicar duas ações não aprovadas**, pois os `.sh` oficiais de IR têm contrato diferente do README. Consultar sempre `docs/evidencia/00_RESUMO_DE_VALIDACAO.txt`, os relatórios individuais e `docs/08_SINTESE_FINAL_E_CRITERIOS_DE_AVALIACAO.md`.

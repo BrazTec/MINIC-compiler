@@ -1,0 +1,69 @@
+CASO: P10
+CATEGORIA: validos
+ARQUIVO: testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P10/P10.c
+GABARITO: testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P10/P10.txt
+SHA256_GABARITO: c1d6bc36cc719e348e18e33369e664129b1dee1d3d6bea4845502a60068539c5
+DATA_UTC: 2026-10-25T02:46:47+00:00
+PLATAFORMA: Windows-11-10.0.26300-SP0
+RESULTADO: APROVADO NOS CRITÉRIOS AUTOMATIZADOS
+
+VERIFICAÇÕES REALIZADAS:
+  - Python -O0: TAC parseável/executável; 18 instruções/linhas; efeitos observáveis=['120']
+  - C -O0: TAC parseável/executável; 18 instruções/linhas; efeitos observáveis=['120']
+  - -O0: saída e código de retorno iguais em Python e C
+
+ATENÇÃO: este relatório não confunde equivalência de execução com
+comprovação de cada transformação-alvo de otimização. A IR canônica
+do professor é referência estrutural, não saída a reproduzir literalmente.
+
+===========================================================================
+EXECUÇÃO: Python -O0
+COMANDO: C:/msys64/ucrt64/bin/python3.exe minic.py --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P10/P10.c
+EXIT_STATUS: 0
+STDOUT:
+func fatorial(n)
+  t1 = n <= 1
+  ifFalse t1 goto L1_endif
+  return 1
+L1_endif:
+  t2 = n - 1
+  param t2
+  t3 = call fatorial, 1
+  t4 = n * t3
+  return t4
+endfunc
+func main
+  param 5
+  t1 = call fatorial, 1
+  r = t1
+  print r
+  return 0
+endfunc
+STDERR:
+(vazio)
+
+===========================================================================
+EXECUÇÃO: C -O0
+COMANDO: C:/Users/eduar/AppData/Local/Temp/minic-ir-casos-2i70nvn5/minic_ir_casos.exe --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P10/P10.c
+EXIT_STATUS: 0
+STDOUT:
+func fatorial(n)
+  t1 = n <= 1
+  ifFalse t1 goto L1_endif
+  return 1
+L1_endif:
+  t2 = n - 1
+  param t2
+  t3 = call fatorial, 1
+  t4 = n * t3
+  return t4
+endfunc
+func main
+  param 5
+  t1 = call fatorial, 1
+  r = t1
+  print r
+  return 0
+endfunc
+STDERR:
+(vazio)

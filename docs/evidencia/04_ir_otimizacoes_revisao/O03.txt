@@ -1,0 +1,49 @@
+REGISTRO DE DESENVOLVIMENTO (nao corresponde a execucao no Windows)
+UTC: 2026-10-25T02:33:58+00:00
+SISTEMA: Linux-6.18.55-x86_64-with-glibc2.41
+Python: 3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]
+GCC: gcc (Debian 14.2.0-19) 14.2.0
+
+GABARITO DE REFERENCIA / CRITERIO DO PROFESSOR (somente leitura):
+Resultado: COMPILAR COM SUCESSO
+Alvo: eliminação de cópias
+IR de referência (-O0):
+  origem = 6
+  copia = origem
+  final = copia
+  print final
+IR otimizada esperada (-O1), equivalente:
+  origem = 6
+  print origem
+  return 0
+
+
+===== O03: Python -O0 | exit 0 =====
+func main
+  origem = 6
+  copia = origem
+  final = copia
+  print final
+  return 0
+endfunc
+
+===== O03: Python -O1 | exit 0 =====
+func main
+  print 6
+  return 0
+endfunc
+
+===== O03: C -O0 | exit 0 =====
+func main
+  origem = 6
+  copia = origem
+  final = copia
+  print final
+  return 0
+endfunc
+
+===== O03: C -O1 | exit 0 =====
+func main
+  print 6
+  return 0
+endfunc

@@ -1,0 +1,139 @@
+ETAPA: Scanner Python
+DATA_UTC: 2026-10-25T02:45:20+00:00
+AMBIENTE: Windows-11-10.0.26300-SP0
+COMANDO: bash test_scanner_python.sh
+RESULTADO DE EXECUÇÃO: APROVADO NO TESTADOR
+
+AMBIENTE DO TESTADOR: PASS=0 FAIL=0 WARN=0 (contadores inicializados externamente; .sh intacto)
+SAÍDA COMPLETA:
+
+================================================================
+Caso: casos-invalidos/i01_simbolo_desconhecido.minic
+Comando: python3 scanner.py ./casos-invalidos/i01_simbolo_desconhecido.minic
+Resultado esperado: ./casos-invalidos/i01_simbolo_desconhecido.expected.jsonl
+OK: 6 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-invalidos/i02_comentario_nao_terminado.minic
+Comando: python3 scanner.py ./casos-invalidos/i02_comentario_nao_terminado.minic
+Resultado esperado: ./casos-invalidos/i02_comentario_nao_terminado.expected.jsonl
+OK: 6 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-invalidos/i03_caractere_nao_terminado.minic
+Comando: python3 scanner.py ./casos-invalidos/i03_caractere_nao_terminado.minic
+Resultado esperado: ./casos-invalidos/i03_caractere_nao_terminado.expected.jsonl
+OK: 9 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-invalidos/i04_cadeia_nao_terminada.minic
+Comando: python3 scanner.py ./casos-invalidos/i04_cadeia_nao_terminada.minic
+Resultado esperado: ./casos-invalidos/i04_cadeia_nao_terminada.expected.jsonl
+OK: 5 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-invalidos/i05_numero_real_malformado.minic
+Comando: python3 scanner.py ./casos-invalidos/i05_numero_real_malformado.minic
+Resultado esperado: ./casos-invalidos/i05_numero_real_malformado.expected.jsonl
+OK: 6 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-invalidos/i06_identificador_iniciado_por_digito.minic
+Comando: python3 scanner.py ./casos-invalidos/i06_identificador_iniciado_por_digito.minic
+Resultado esperado: ./casos-invalidos/i06_identificador_iniciado_por_digito.expected.jsonl
+OK: 7 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-programas-c/c01_fibonacci.c
+Comando: python3 scanner.py ./casos-programas-c/c01_fibonacci.c
+Resultado esperado: ./casos-programas-c/c01_fibonacci.c.expected.jsonl
+OK: 85 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-programas-c/c02_primos.c
+Comando: python3 scanner.py ./casos-programas-c/c02_primos.c
+Resultado esperado: ./casos-programas-c/c02_primos.c.expected.jsonl
+OK: 96 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-programas-c/c03_media_vetor.c
+Comando: python3 scanner.py ./casos-programas-c/c03_media_vetor.c
+Resultado esperado: ./casos-programas-c/c03_media_vetor.c.expected.jsonl
+OK: 115 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-programas-c/c04_menu_interativo.c
+Comando: python3 scanner.py ./casos-programas-c/c04_menu_interativo.c
+Resultado esperado: ./casos-programas-c/c04_menu_interativo.c.expected.jsonl
+OK: 95 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-programas-c/c05_controle_temperatura.c
+Comando: python3 scanner.py ./casos-programas-c/c05_controle_temperatura.c
+Resultado esperado: ./casos-programas-c/c05_controle_temperatura.c.expected.jsonl
+OK: 61 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-validos/v01_declaracoes.minic
+Comando: python3 scanner.py ./casos-validos/v01_declaracoes.minic
+Resultado esperado: ./casos-validos/v01_declaracoes.expected.jsonl
+OK: 21 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-validos/v02_expressao_precedencia.minic
+Comando: python3 scanner.py ./casos-validos/v02_expressao_precedencia.minic
+Resultado esperado: ./casos-validos/v02_expressao_precedencia.expected.jsonl
+OK: 37 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-validos/v03_operadores_compostos.minic
+Comando: python3 scanner.py ./casos-validos/v03_operadores_compostos.minic
+Resultado esperado: ./casos-validos/v03_operadores_compostos.expected.jsonl
+OK: 63 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-validos/v04_comentarios_e_posicoes.minic
+Comando: python3 scanner.py ./casos-validos/v04_comentarios_e_posicoes.minic
+Resultado esperado: ./casos-validos/v04_comentarios_e_posicoes.expected.jsonl
+OK: 18 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-validos/v05_funcoes_e_vetores.minic
+Comando: python3 scanner.py ./casos-validos/v05_funcoes_e_vetores.minic
+Resultado esperado: ./casos-validos/v05_funcoes_e_vetores.expected.jsonl
+OK: 87 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-validos/v06_reservadas_vs_identificadores.minic
+Comando: python3 scanner.py ./casos-validos/v06_reservadas_vs_identificadores.minic
+Resultado esperado: ./casos-validos/v06_reservadas_vs_identificadores.expected.jsonl
+OK: 41 token(s).
+RESULTADO: OK
+
+================================================================
+Caso: casos-validos/v07_literais_opcionais.minic
+Comando: python3 scanner.py ./casos-validos/v07_literais_opcionais.minic
+Resultado esperado: ./casos-validos/v07_literais_opcionais.expected.jsonl
+OK: 36 token(s).
+RESULTADO: OK
+
+================================================================
+Resumo: 18 OK, 0 falharam, 0 avisos, 18 casos verificados.
+
+EXIT_STATUS: 0

@@ -1,0 +1,76 @@
+REGISTRO DE DESENVOLVIMENTO (nao corresponde a execucao no Windows)
+UTC: 2026-10-25T02:33:58+00:00
+SISTEMA: Linux-6.18.55-x86_64-with-glibc2.41
+Python: 3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]
+GCC: gcc (Debian 14.2.0-19) 14.2.0
+
+GABARITO DE REFERENCIA / CRITERIO DO PROFESSOR (somente leitura):
+Resultado: COMPILAR COM SUCESSO
+Alvo: eliminação de subexpressão comum local
+IR de referência (-O0):
+  a = 3
+  b = 7
+  t1 = a * b
+  t2 = t1 + 1
+  x = t2
+  t3 = a * b
+  t4 = t3 + 2
+  y = t4
+  print x
+  print y
+IR otimizada esperada (-O1), equivalente:
+  a = 3
+  b = 7
+  t1 = a * b
+  t2 = t1 + 1
+  x = t2
+  t3 = t1 + 2
+  y = t3
+  print x
+  print y
+  return 0
+
+
+===== O05: Python -O0 | exit 0 =====
+func main
+  a = 3
+  b = 7
+  t1 = a * b
+  t2 = t1 + 1
+  x = t2
+  t3 = a * b
+  t4 = t3 + 2
+  y = t4
+  print x
+  print y
+  return 0
+endfunc
+
+===== O05: Python -O1 | exit 0 =====
+func main
+  print 22
+  print 23
+  return 0
+endfunc
+
+===== O05: C -O0 | exit 0 =====
+func main
+  a = 3
+  b = 7
+  t1 = a * b
+  t2 = t1 + 1
+  x = t2
+  t3 = a * b
+  t4 = t3 + 2
+  y = t4
+  print x
+  print y
+  return 0
+endfunc
+
+===== O05: C -O1 | exit 0 =====
+func main
+  print 22
+  print 23
+  return 0
+endfunc

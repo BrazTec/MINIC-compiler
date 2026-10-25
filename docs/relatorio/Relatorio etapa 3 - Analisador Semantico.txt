@@ -1,0 +1,145 @@
+===============================================================================
+MINIC - COMPILADOR
+RELATÓRIO DA ETAPA 3: ANALISADOR SEMÂNTICO
+===============================================================================
+Disciplina: Compiladores
+Implementações: Python 3 e C11
+Status: IMPLEMENTADA E VALIDADA — 20/20 casos em Python e 20/20 em C (suítes oficiais).
+
+1. INTRODUÇÃO
+-------------------------------------------------------------------------------
+Esta etapa verifica o significado das construções reconhecidas pelo parser:
+identificadores e escopos, tipos, atribuições, chamadas, vetores e retornos.
+O projeto utiliza o pipeline Scanner → Parser DESCENDENTE RECURSIVO → Semântico.
+A análise semântica opera sobre uma AST e não substitui a análise sintática.
+
+2. OBJETIVOS
+-------------------------------------------------------------------------------
+- Verificar declarações, existência de símbolos e escopos.
+- Inferir tipos e controlar conversões permitidas.
+- Validar índices, chamadas de função, uso de void e retornos.
+- Emitir diagnósticos SEM com posição e natureza do erro.
+- Reproduzir o mesmo comportamento nas versões Python e C.
+- Preservar os contratos das suítes léxica e sintática já concluídas.
+
+3. ARQUITETURA E INTEGRAÇÃO
+-------------------------------------------------------------------------------
+Python:
+    scanner.py → parser.py → semantic.py
+                             ↑
+                      minic.py (driver)
+
+C:
+    parser.c contém lexer interno e parser descendente recursivo;
+    semantic.c contém as verificações semânticas;
+    minic.c é o ponto de entrada exigido pelo testador.
+
+O script oficial C compila somente minic.c. Por compatibilidade, minic.c
+inclui parser.c e semantic.c na mesma unidade de tradução. A separação dos
+arquivos corresponde a separação lógica de responsabilidades; não se declara
+compilação/vinculação independente de cada módulo C. O main isolado do
+parser.c é desabilitado no driver por MINIC_EMBEDDED.
+
+4. ADEQUAÇÕES COMPATÍVEIS DO PARSER
+-------------------------------------------------------------------------------
+- Nós relevantes da AST registram linha e coluna para diagnósticos.
+- Parameter registra se o argumento formal é vetor, como int dados[].
+- Foi criado semantic_mode, ativado somente no compilador integrado.
+- Nesse modo, certas verificações de destino atribuível são delegadas à
+  etapa semântica (SEM013), sem alterar a forma de saída do parser isolado.
+- A AST serializada dos 50 casos anteriores permanece compatível.
+
+5. REGRAS SEMÂNTICAS IMPLEMENTADAS
+-------------------------------------------------------------------------------
+- Escopo léxico e sombreamento; declaração duplicada no mesmo escopo.
+- Identificador não declarado e coleta de assinaturas para recursão.
+- Promoção implícita int → float; rejeição de float → int sem conversão.
+- Operações aritméticas, relacionais e lógicas.
+- Condições de if/while exigindo bool.
+- Vetores, índices inteiros e parâmetros vetor.
+- Verificação de aridade e tipos de argumentos.
+- Uso permitido de void como comando e rejeição como valor.
+- Compatibilidade de retorno e cobertura de retorno em função não void.
+- Validação de destino atribuível e atribuição associativa à direita.
+
+Códigos de diagnóstico presentes na suíte:
+    SEM001  identificador não declarado
+    SEM002  declaração duplicada
+    SEM003  incompatibilidade de atribuição/conversão
+    SEM005  condição não booleana
+    SEM006  índice de vetor inválido
+    SEM007  aridade incorreta
+    SEM008  argumento de tipo incompatível
+    SEM009  retorno incompatível
+    SEM011  possível fim de função não void sem retorno
+    SEM012  função void utilizada como valor
+    SEM013  destino não atribuível
+
+6. SDD: FORMALIZAÇÃO E RASTREABILIDADE
+-------------------------------------------------------------------------------
+A Definição Dirigida pela Sintaxe (SDD) é explicitada em
+`docs/02_SDD_ANALISE_SEMANTICA.md`, relacionando produções gramaticais a
+atributos herdados (ex.: ambiente/escopo) e sintetizados (ex.: tipo).
+
+Na implementação, Scope e Symbol representam o contexto de declarações,
+TypeRef representa tipos, e as rotinas de inferência e verificação aplicam
+as regras documentadas sobre a AST. Essa formalização não significa que o
+projeto possua um parser LR/SLR/LALR: o parser é descendente recursivo.
+
+7. DIAGNÓSTICOS E FORMATO DE SAÍDA
+-------------------------------------------------------------------------------
+O modo semântico do driver, sem a opção --ir, preserva o contrato histórico:
+    python3 minic.py arquivo.c
+    ./minic arquivo.c
+
+O resumo de um programa válido é:
+    Análise semântica concluída: 0 erros; programa aceito.
+
+Em caso inválido, a saída apresenta diagnósticos SEM e a síntese de rejeição.
+Os gabaritos desta suíte utilizam LF (\n) entre as linhas e não possuem
+quebra de linha final. A emissão no driver é compatível com essa codificação;
+no Windows, o modo binário de stdout evita tradução automática de LF em CRLF.
+Não foram alterados os gabaritos nem os scripts oficiais.
+
+8. VALIDAÇÃO
+-------------------------------------------------------------------------------
+Versão Python:
+    bash testes_semanticos_py.sh minic.py ./minic-testes-semanticos
+    Resultado: 20/20 aprovados; 0 reprovados.
+
+Versão C:
+    bash testes_semanticos_c.sh minic.c ./minic-testes-semanticos
+    Resultado: 20/20 aprovados; 0 reprovados.
+
+Arquivos de evidência de execução integral:
+    docs/evidencia/03_semantico_python.txt
+    docs/evidencia/03_semantico_c.txt
+
+A suíte da Etapa 2 continuou com 50/50 em Python e C. Os 25 erros
+sintáticos contabilizados pelo teste do parser correspondem a casos
+intencionalmente inválidos e não a erros de execução.
+
+9. LIMITAÇÕES E ESCOPO
+-------------------------------------------------------------------------------
+O sucesso nos 20 casos do professor comprova os cenários exercitados, não
+a correção universal do analisador. Regras adicionais, como uso indevido de
+símbolos com categoria incompatível ou expressões de dimensão inválidas,
+precisam de testes complementares. A implementação recebe extensões na Etapa 4,
+mas sua compatibilidade com a suíte semântica deve continuar verificada.
+
+10. CONCLUSÃO
+-------------------------------------------------------------------------------
+O analisador semântico está implementado e validado pelos 20 testes oficiais
+em Python e C, com diagnósticos equivalentes e sem falhas na suíte. A SDD
+formaliza as regras sobre a AST e a arquitetura declara corretamente o
+parser descendente recursivo e a limitação do acoplamento físico em C.
+
+
+-------------------------------------------------------------------------------
+REGISTRO DE REVALIDAÇÃO — WINDOWS, 25/10/2026 ÀS 02:45:20 UTC
+-------------------------------------------------------------------------------
+Registro: docs/evidencia/00_RESUMO_DE_VALIDACAO.txt.
+Semântico Python: aprovado (20/20); Semântico C: aprovado (20/20).
+A execução do IR permanece independente do contrato histórico sem --ir.
+Este registro resume evidências existentes; não constitui uma nova
+execução no ambiente Windows.

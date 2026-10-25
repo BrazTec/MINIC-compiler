@@ -1,0 +1,91 @@
+CASO: O05
+CATEGORIA: otimizacoes
+ARQUIVO: testes-scanner-minic_codes/minic-ir-test-cases/testes/03-otimizacoes/O05/O05.c
+GABARITO: testes-scanner-minic_codes/minic-ir-test-cases/testes/03-otimizacoes/O05/O05.txt
+SHA256_GABARITO: 88c7550b62d092da2fb659ba6c536b697735c5aec63bd6f23e800b7ca727640a
+DATA_UTC: 2026-10-25T02:46:49+00:00
+PLATAFORMA: Windows-11-10.0.26300-SP0
+RESULTADO: APROVADO NOS CRITÉRIOS AUTOMATIZADOS
+
+VERIFICAÇÕES REALIZADAS:
+  - Python -O0: TAC parseável/executável; 13 instruções/linhas; efeitos observáveis=['22', '23']
+  - C -O0: TAC parseável/executável; 13 instruções/linhas; efeitos observáveis=['22', '23']
+  - -O0: saída e código de retorno iguais em Python e C
+  - Python -O1: TAC parseável/executável; 5 instruções/linhas; efeitos observáveis=['22', '23']
+  - C -O1: TAC parseável/executável; 5 instruções/linhas; efeitos observáveis=['22', '23']
+  - -O1: saída e código de retorno iguais em Python e C
+  - Python: IR -O1 ALTERADA em relação a -O0; linhas -O0=13, -O1=5
+  - C: IR -O1 ALTERADA em relação a -O0; linhas -O0=13, -O1=5
+  - Transformação-alvo específica: requer confronto estrutural/inspeção; saída alterada não garante aplicação da otimização nomeada no gabarito
+
+ATENÇÃO: este relatório não confunde equivalência de execução com
+comprovação de cada transformação-alvo de otimização. A IR canônica
+do professor é referência estrutural, não saída a reproduzir literalmente.
+
+===========================================================================
+EXECUÇÃO: Python -O0
+COMANDO: C:/msys64/ucrt64/bin/python3.exe minic.py --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/03-otimizacoes/O05/O05.c
+EXIT_STATUS: 0
+STDOUT:
+func main
+  a = 3
+  b = 7
+  t1 = a * b
+  t2 = t1 + 1
+  x = t2
+  t3 = a * b
+  t4 = t3 + 2
+  y = t4
+  print x
+  print y
+  return 0
+endfunc
+STDERR:
+(vazio)
+
+===========================================================================
+EXECUÇÃO: C -O0
+COMANDO: C:/Users/eduar/AppData/Local/Temp/minic-ir-casos-2i70nvn5/minic_ir_casos.exe --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/03-otimizacoes/O05/O05.c
+EXIT_STATUS: 0
+STDOUT:
+func main
+  a = 3
+  b = 7
+  t1 = a * b
+  t2 = t1 + 1
+  x = t2
+  t3 = a * b
+  t4 = t3 + 2
+  y = t4
+  print x
+  print y
+  return 0
+endfunc
+STDERR:
+(vazio)
+
+===========================================================================
+EXECUÇÃO: Python -O1
+COMANDO: C:/msys64/ucrt64/bin/python3.exe minic.py --ir -O1 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/03-otimizacoes/O05/O05.c
+EXIT_STATUS: 0
+STDOUT:
+func main
+  print 22
+  print 23
+  return 0
+endfunc
+STDERR:
+(vazio)
+
+===========================================================================
+EXECUÇÃO: C -O1
+COMANDO: C:/Users/eduar/AppData/Local/Temp/minic-ir-casos-2i70nvn5/minic_ir_casos.exe --ir -O1 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/03-otimizacoes/O05/O05.c
+EXIT_STATUS: 0
+STDOUT:
+func main
+  print 22
+  print 23
+  return 0
+endfunc
+STDERR:
+(vazio)

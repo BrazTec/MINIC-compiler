@@ -1,0 +1,47 @@
+CASO: P09
+CATEGORIA: validos
+ARQUIVO: testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P09/P09.c
+GABARITO: testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P09/P09.txt
+SHA256_GABARITO: 3a73fc2983bff9a0b487cd4b7be41a69c25cf32bf429a923c189446429b2153d
+DATA_UTC: 2026-10-25T02:46:47+00:00
+PLATAFORMA: Windows-11-10.0.26300-SP0
+RESULTADO: APROVADO NOS CRITÉRIOS AUTOMATIZADOS
+
+VERIFICAÇÕES REALIZADAS:
+  - Python -O0: TAC parseável/executável; 7 instruções/linhas; efeitos observáveis=['8', '5']
+  - C -O0: TAC parseável/executável; 7 instruções/linhas; efeitos observáveis=['8', '5']
+  - -O0: saída e código de retorno iguais em Python e C
+
+ATENÇÃO: este relatório não confunde equivalência de execução com
+comprovação de cada transformação-alvo de otimização. A IR canônica
+do professor é referência estrutural, não saída a reproduzir literalmente.
+
+===========================================================================
+EXECUÇÃO: Python -O0
+COMANDO: C:/msys64/ucrt64/bin/python3.exe minic.py --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P09/P09.c
+EXIT_STATUS: 0
+STDOUT:
+func main
+  x = 5
+  x#2 = 8
+  print x#2
+  print x
+  return 0
+endfunc
+STDERR:
+(vazio)
+
+===========================================================================
+EXECUÇÃO: C -O0
+COMANDO: C:/Users/eduar/AppData/Local/Temp/minic-ir-casos-2i70nvn5/minic_ir_casos.exe --ir -O0 E:/Usuários/Eduardo/Documentos/1. Estudos/2. Faculdade Impacta/Ciência da Computação/6 - Sexto Semestre/Compiladores - Alex/Compilador MINIC/testes-scanner-minic_codes/minic-ir-test-cases/testes/01-validos-sem-otimizacao/P09/P09.c
+EXIT_STATUS: 0
+STDOUT:
+func main
+  x = 5
+  x#2 = 8
+  print x#2
+  print x
+  return 0
+endfunc
+STDERR:
+(vazio)
